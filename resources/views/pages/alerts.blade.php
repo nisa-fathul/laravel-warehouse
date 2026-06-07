@@ -7,7 +7,7 @@ $infos    = array_filter($alerts, fn($a) => $a['level']==='info');
 <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
   <div class="kpi-card danger">
     <div class="kpi-label">Critical</div>
-    <div class="kpi-value"><?= count($critical) ?></div>
+    <div class="kpi-value"><?= count($critical) ?>B</div>
     <div class="kpi-sub">Immediate action needed</div>
   </div>
   <div class="kpi-card warn">
