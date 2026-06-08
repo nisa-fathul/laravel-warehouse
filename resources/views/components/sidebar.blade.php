@@ -4,65 +4,50 @@
         <!-- INVENTORY MANAGEMENT -->
         <li class="nav-heading">INVENTORY MANAGEMENT</li>
         <li class="nav-item">
-            <a class="nav-link {{ request('page') == 'dashboard' ? '' : 'collapsed' }}" href="?page=dashboard">
+            <a class="nav-link {{ request()->routeIs('dashboard') ? '' : 'collapsed' }}"
+                href="{{ route('dashboard') }}">
                 <i class="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
             </a>
         </li>
+
         <li class="nav-item">
-            <a class="nav-link {{ request('page') == 'inventory' ? '' : 'collapsed' }}" href="?page=inventory">
+            <a class="nav-link {{ request()->routeIs('inventory.*') ? '' : 'collapsed' }}"
+                href="{{ route('inventory.index') }}">
                 <i class="bi bi-box-seam"></i>
                 <span>Inventory</span>
             </a>
         </li>
+
         <li class="nav-item">
-            <a class="nav-link {{ request('page') == 'forecast' ? '' : 'collapsed' }}" href="?page=forecast">
+            <a class="nav-link {{ request()->routeIs('forecast.*') ? '' : 'collapsed' }}"
+                href="{{ route('forecast.index') }}">
                 <i class="bi bi-graph-up-arrow"></i>
                 <span>Forecast</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request('page') == 'orders' ? '' : 'collapsed' }}" href="?page=orders">
-                <i class="bi bi-cart-check"></i>
-                <span>Orders</span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{ request('page') == 'alerts' ? '' : 'collapsed' }}" href="?page=alerts">
-                <i class="bi bi-bell"></i>
-                <span>Alerts</span>
 
-                @php
-                $ac = count(array_filter($alerts ?? [], fn($a) => $a['level'] === 'critical'));
-                @endphp
-
-                @if($ac > 0)
-                <span class="badge bg-danger ms-auto">
-                    {{ $ac }}
-                </span>
-                @endif
-            </a>
-        </li>
-        <!-- DELIVERY -->
         <li class="nav-heading">DELIVERY</li>
         <li class="nav-item">
-            <a class="nav-link {{ request('page') == 'delivery_in' ? '' : 'collapsed' }}" href="?page=delivery_in">
+            <a class="nav-link {{ request()->routeIs('transaction.in') ? '' : 'collapsed' }}"
+                href="{{ route('transaction.in') }}">
                 <i class="bi bi-box-arrow-in-down"></i>
                 <span>Delivery In</span>
             </a>
         </li>
+
         <li class="nav-item">
-            <a class="nav-link {{ request('page') == 'delivery_out' ? '' : 'collapsed' }}" href="?page=delivery_out">
+            <a class="nav-link {{ request()->routeIs('transaction.out') ? '' : 'collapsed' }}"
+                href="{{ route('transaction.out') }}">
                 <i class="bi bi-box-arrow-up"></i>
                 <span>Delivery Out</span>
             </a>
         </li>
 
-        <!-- REPORT -->
         <li class="nav-heading">REPORT</li>
-
         <li class="nav-item">
-            <a class="nav-link {{ request('page') == 'report' ? '' : 'collapsed' }}" href="?page=report">
+            <a class="nav-link {{ request()->routeIs('report.*') ? '' : 'collapsed' }}"
+                href="{{ route('report.index') }}">
                 <i class="bi bi-bar-chart"></i>
                 <span>Sales Report</span>
             </a>
