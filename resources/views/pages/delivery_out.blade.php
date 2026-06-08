@@ -1,267 +1,379 @@
-<?php
-// pages/delivery_out.php
-$total_qty_out   = array_sum(array_column($delivery_out, 'qty'));
-$total_value_out = array_sum(array_map(fn($d) => $d['qty'] * $d['unit_cost'], $delivery_out));
+@extends('html.html')
 
-$type_counts = [];
-foreach ($delivery_out as $d) $type_counts[$d['type']] = ($type_counts[$d['type']] ?? 0) + 1;
-arsort($type_counts);
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+@endpush
 
-$inv_index = [];
-foreach ($inventory as $item) $inv_index[$item['id']] = $item;
-?>
+@section('content')
+@include('components.navbar')
+@include('components.sidebar')
 
-<!-- KPI Strip -->
-<div class="kpi-grid" style="grid-template-columns:repeat(4,1fr); margin-bottom:1.5rem">
-  <div class="kpi-card" style="border-top:3px solid var(--warn)">
-    <div class="kpi-label">Total Pengiriman</div>
-    <div class="kpi-value"><?= count($delivery_out) ?></div>
-    <div class="kpi-sub">Dokumen keluar</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">Nilai Barang Keluar</div>
-    <div class="kpi-value">$<?= fmt($total_value_out) ?></div>
-    <div class="kpi-sub">Total nilai dikirim</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">Internal Transfer</div>
-    <div class="kpi-value"><?= $type_counts['Internal Transfer'] ?? 0 ?></div>
-    <div class="kpi-sub">Pindah antar divisi</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">Outbound Shipment</div>
-    <div class="kpi-value"><?= $type_counts['Outbound Shipment'] ?? 0 ?></div>
-    <div class="kpi-sub">Ke pelanggan / eksternal</div>
-  </div>
-</div>
+<div class="flex-grow-1 overflow-hidden" id="page-content-wrapper">
 
-<!-- Form: Tambah Pengeluaran -->
-<div class="panel dout-form-panel" style="margin-bottom:1.5rem">
-  <div class="panel-head">
-    <span>+ Catat Pengeluaran Baru</span>
-    <button class="toggle-form-btn" onclick="toggleFormOut('dout-form')">Buka Form ▾</button>
-  </div>
-  <div id="dout-form" style="display:none">
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Tanggal Keluar</label>
-        <input type="date" class="form-input" value="<?= date('Y-m-d') ?>">
+  <main class="container-fluid py-4">
+    
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-start border-warning border-4 shadow-sm">
+          <div class="card-body">
+            <div class="text-muted small fw-bold text-uppercase">Total Pengiriman</div>
+            <div class="fs-3 fw-bold my-1">3</div>
+            <div class="text-secondary small">Dokumen keluar</div>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Waktu</label>
-        <input type="time" class="form-input" value="<?= date('H:i') ?>">
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-start border-success border-4 shadow-sm">
+          <div class="card-body">
+            <div class="text-muted small fw-bold text-uppercase">Nilai Barang Keluar</div>
+            <div class="fs-3 fw-bold my-1">$4,125.00</div>
+            <div class="text-secondary small">Total nilai dikirim</div>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Pilih SKU / Barang</label>
-        <select class="form-input" onchange="fillItemOut(this)">
-          <option value="">— Pilih item —</option>
-          <?php foreach ($inventory as $item): ?>
-          <option value="<?= $item['id'] ?>"
-            data-name="<?= htmlspecialchars($item['name']) ?>"
-            data-unit="<?= $item['unit'] ?>"
-            data-cost="<?= $item['unit_cost'] ?>"
-            data-stock="<?= $item['stock'] ?>">
-            <?= $item['id'] ?> — <?= htmlspecialchars($item['name']) ?> (Stok: <?= number_format($item['stock']) ?> <?= $item['unit'] ?>)
-          </option>
-          <?php endforeach; ?>
-        </select>
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-start border-info border-4 shadow-sm">
+          <div class="card-body">
+            <div class="text-muted small fw-bold text-uppercase">Internal Transfer</div>
+            <div class="fs-3 fw-bold my-1">2</div>
+            <div class="text-secondary small">Pindah antar divisi</div>
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Nama Barang</label>
-        <input type="text" class="form-input" id="dout-item-name" placeholder="Otomatis terisi" readonly>
-      </div>
-      <div class="form-group">
-        <label>Tujuan / Departemen</label>
-        <input type="text" class="form-input" placeholder="Cth: Production Line A">
-      </div>
-      <div class="form-group">
-        <label>Jenis Pengeluaran</label>
-        <select class="form-input">
-          <option>Internal Transfer</option>
-          <option>Internal Use</option>
-          <option>Outbound Shipment</option>
-          <option>Return to Supplier</option>
-          <option>Write-off / Disposal</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Qty Keluar</label>
-        <input type="number" class="form-input" id="dout-qty" placeholder="0" oninput="checkStock()">
-      </div>
-      <div class="form-group">
-        <label>Satuan</label>
-        <input type="text" class="form-input" id="dout-unit" placeholder="pcs / L / kg" readonly>
-      </div>
-      <div class="form-group">
-        <label>Stok Tersedia</label>
-        <input type="text" class="form-input" id="dout-stock" placeholder="—" readonly style="color:var(--accent)">
-      </div>
-      <div class="form-group">
-        <label>Diminta Oleh</label>
-        <input type="text" class="form-input" placeholder="Nama pemohon">
-      </div>
-      <div class="form-group">
-        <label>Disetujui Oleh</label>
-        <input type="text" class="form-input" placeholder="Nama approver">
-      </div>
-      <div class="form-group">
-        <label>Estimasi Nilai ($)</label>
-        <input type="text" class="form-input" id="dout-value" placeholder="—" readonly>
-      </div>
-      <div class="form-group form-full">
-        <label>Catatan</label>
-        <textarea class="form-input" rows="2" placeholder="Catatan pengiriman..."></textarea>
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card h-100 border-start border-dark border-4 shadow-sm">
+          <div class="card-body">
+            <div class="text-muted small fw-bold text-uppercase">Outbound Shipment</div>
+            <div class="fs-3 fw-bold my-1">1</div>
+            <div class="text-secondary small">Ke pelanggan / eksternal</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div id="dout-stock-warn" class="stock-warn-msg" style="display:none">
-      ⚠️ Qty melebihi stok tersedia!
-    </div>
-    <div class="form-actions">
-      <button class="btn-primary btn-warn" onclick="submitForm('dout')">✓ Simpan Pengeluaran</button>
-      <button class="btn-ghost" onclick="toggleFormOut('dout-form')">Batal</button>
-    </div>
-  </div>
-</div>
 
-<!-- Tabel Riwayat Delivery Out -->
-<div class="panel">
-  <div class="panel-head">
-    <span>Riwayat Pengeluaran Barang (<?= count($delivery_out) ?> dokumen)</span>
-    <div class="filter-row">
-      <select class="form-input form-input-sm" id="dout-filter-type" onchange="filterDout()">
-        <option value="">Semua Jenis</option>
-        <?php foreach (array_keys($type_counts) as $t): ?>
-        <option value="<?= strtolower($t) ?>"><?= $t ?></option>
-        <?php endforeach; ?>
-      </select>
-      <input type="text" class="search-input" id="dout-search" placeholder="Cari item / tujuan…" oninput="filterDout()">
-    </div>
-  </div>
-  <div class="table-wrap">
-    <table class="data-table" id="dout-table">
-      <thead>
-        <tr>
-          <th>No. Dokumen</th>
-          <th>Tanggal</th>
-          <th>SKU</th>
-          <th>Nama Barang</th>
-          <th>Tujuan</th>
-          <th>Jenis</th>
-          <th>Qty Keluar</th>
-          <th>Nilai</th>
-          <th>Diminta Oleh</th>
-          <th>Disetujui</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($delivery_out as $d):
-          $value = $d['qty'] * $d['unit_cost'];
-          $type_class = match($d['type']) {
-            'Internal Transfer'  => 'badge-info',
-            'Internal Use'       => 'badge-neutral',
-            'Outbound Shipment'  => 'badge-warn',
-            default              => 'badge-neutral',
-          };
-        ?>
-        <tr class="dout-row"
-            data-search="<?= strtolower($d['item'].' '.$d['destination'].' '.$d['sku']) ?>"
-            data-type="<?= strtolower($d['type']) ?>">
-          <td><span class="mono doc-id dout-id"><?= $d['id'] ?></span></td>
-          <td>
-            <div class="mono" style="font-size:11px"><?= $d['date'] ?></div>
-            <div class="item-supplier"><?= $d['time'] ?></div>
-          </td>
-          <td><span class="mono text-warn"><?= $d['sku'] ?></span></td>
-          <td>
-            <div class="item-name"><?= htmlspecialchars($d['item']) ?></div>
-            <?php if ($d['notes']): ?>
-            <div class="item-supplier" title="<?= htmlspecialchars($d['notes']) ?>">📝 <?= mb_strimwidth($d['notes'],0,40,'…') ?></div>
-            <?php endif; ?>
-          </td>
-          <td><?= htmlspecialchars($d['destination']) ?></td>
-          <td><span class="badge-pill <?= $type_class ?>"><?= $d['type'] ?></span></td>
-          <td class="mono text-warn"><?= number_format($d['qty']) ?> <?= $d['unit'] ?></td>
-          <td class="mono">$<?= number_format($value, 2) ?></td>
-          <td><?= htmlspecialchars($d['requested_by']) ?></td>
-          <td><?= htmlspecialchars($d['approved_by']) ?></td>
-          <td><span class="status-tag status-tag-ok"><?= $d['status'] ?></span></td>
-        </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-  </div>
-</div>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+        <h5 class="mb-0 fw-bold text-secondary">+ Catat Pengeluaran Baru</h5>
+        <button class="btn btn-sm btn-outline-warning text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#dout-form-collapse" aria-expanded="false" aria-controls="dout-form-collapse" id="toggle-form-btn-out">
+          Buka Form ▾
+        </button>
+      </div>
+      <div class="collapse" id="dout-form-collapse">
+        <div class="card-body bg-light-subtle">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Tanggal Keluar</label>
+              <input type="date" class="form-control" value="2026-06-08">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Waktu</label>
+              <input type="time" class="form-control" value="16:25">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Pilih SKU / Barang</label>
+              <select class="form-select" onchange="fillItemOut(this)">
+                <option value="">— Pilih item —</option>
+                <option value="SKU-001" data-name="Laptop Asus ROG" data-unit="pcs" data-cost="1500.00" data-stock="15">SKU-001 — Laptop Asus ROG (Stok: 15 pcs)</option>
+                <option value="SKU-002" data-name="Logitech G Pro X Wireless" data-unit="pcs" data-cost="125.00" data-stock="45">SKU-002 — Logitech G Pro X Wireless (Stok: 45 pcs)</option>
+                <option value="SKU-003" data-name="Monitor Dell 24 Inch" data-unit="unit" data-cost="200.00" data-stock="8">SKU-003 — Monitor Dell 24 Inch (Stok: 8 unit)</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Nama Barang</label>
+              <input type="text" class="form-control" id="dout-item-name" placeholder="Otomatis terisi" readonly>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Tujuan / Departemen</label>
+              <input type="text" class="form-control" placeholder="Cth: Production Line A">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Jenis Pengeluaran</label>
+              <select class="form-select">
+                <option>Internal Transfer</option>
+                <option>Internal Use</option>
+                <option>Outbound Shipment</option>
+                <option>Return to Supplier</option>
+                <option>Write-off / Disposal</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Qty Keluar</label>
+              <input type="number" class="form-control" id="dout-qty" placeholder="0" oninput="checkStock()">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Satuan</label>
+              <input type="text" class="form-control" id="dout-unit" placeholder="pcs / L / kg" readonly>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Stok Tersedia</label>
+              <input type="text" class="form-control text-primary fw-bold" id="dout-stock" placeholder="—" readonly>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Diminta Oleh</label>
+              <input type="text" class="form-control" placeholder="Nama pemohon">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Disetujui Oleh</label>
+              <input type="text" class="form-control" placeholder="Nama approver">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label small fw-semibold">Estimasi Nilai ($)</label>
+              <input type="text" class="form-control fw-bold" id="dout-value" placeholder="—" readonly>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-semibold">Catatan</label>
+              <textarea class="form-control" rows="2" placeholder="Catatan pengiriman..."></textarea>
+            </div>
+          </div>
+          
+          <div id="dout-stock-warn" class="alert alert-danger d-none mt-3 mb-0" role="alert">
+            ⚠️ Qty melebihi stok tersedia!
+          </div>
 
-<!-- Summary per SKU -->
-<div class="panel" style="margin-top:1.5rem">
-  <div class="panel-head"><span>Ringkasan Pengeluaran per SKU</span></div>
-  <div class="sku-summary-grid">
-    <?php
-    $sku_out = [];
-    foreach ($delivery_out as $d) {
-      if (!isset($sku_out[$d['sku']])) $sku_out[$d['sku']] = ['name'=>$d['item'],'qty'=>0,'value'=>0,'txn'=>0];
-      $sku_out[$d['sku']]['qty']   += $d['qty'];
-      $sku_out[$d['sku']]['value'] += $d['qty'] * $d['unit_cost'];
-      $sku_out[$d['sku']]['txn']++;
-    }
-    foreach ($sku_out as $sku => $s):
-      $item = $inv_index[$sku] ?? null;
-    ?>
-    <div class="sku-sum-card dout-card">
-      <div class="sku-sum-head">
-        <span class="mono text-warn" style="font-size:11px"><?= $sku ?></span>
-        <span class="badge-pill badge-neutral"><?= $s['txn'] ?> txn</span>
-      </div>
-      <div class="sku-sum-name"><?= htmlspecialchars($s['name']) ?></div>
-      <div class="sku-sum-rows">
-        <div class="sku-sum-row"><span>Total Keluar</span><strong class="text-warn"><?= number_format($s['qty']) ?> <?= $item['unit'] ?? '' ?></strong></div>
-        <div class="sku-sum-row"><span>Total Nilai</span><strong>$<?= fmt($s['value']) ?></strong></div>
-        <div class="sku-sum-row"><span>Stok Saat Ini</span><strong><?= $item ? number_format($item['stock']) : '—' ?></strong></div>
+          <div class="mt-4 pt-3 border-top d-flex gap-2">
+            <button class="btn btn-warning text-dark fw-bold" onclick="submitForm('dout')">✓ Simpan Pengeluaran</button>
+            <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#dout-form-collapse">Batal</button>
+          </div>
+        </div>
       </div>
     </div>
-    <?php endforeach; ?>
-  </div>
-</div>
 
-<!-- Type Breakdown -->
-<div class="panel" style="margin-top:1.5rem">
-  <div class="panel-head"><span>Distribusi Jenis Pengeluaran</span></div>
-  <div class="type-breakdown">
-    <?php
-    $type_vals = [];
-    foreach ($delivery_out as $d) $type_vals[$d['type']] = ($type_vals[$d['type']] ?? 0) + $d['qty'] * $d['unit_cost'];
-    $total_tv = array_sum($type_vals);
-    $colors = ['Internal Transfer'=>'var(--info)','Internal Use'=>'var(--text3)','Outbound Shipment'=>'var(--warn)'];
-    foreach ($type_vals as $type => $val):
-      $pct = $total_tv > 0 ? round($val / $total_tv * 100) : 0;
-      $col = $colors[$type] ?? 'var(--accent)';
-    ?>
-    <div class="type-row">
-      <div class="type-label">
-        <span style="color:<?= $col ?>;margin-right:6px">●</span>
-        <span><?= $type ?></span>
-        <span class="type-pct"><?= $pct ?>%</span>
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold text-secondary">Riwayat Pengeluaran Barang</h5>
       </div>
-      <div class="type-bar-wrap">
-        <div class="type-bar"><div class="type-bar-fill" style="width:<?= $pct ?>%;background:<?= $col ?>"></div></div>
-        <span class="type-val mono">$<?= fmt($val) ?></span>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle w-100" id="dout-table">
+            <thead class="table-light text-secondary small text-uppercase">
+              <tr>
+                <th>No. Dokumen</th>
+                <th>Tanggal / Waktu</th>
+                <th>SKU</th>
+                <th>Nama Barang</th>
+                <th>Tujuan</th>
+                <th>Jenis</th>
+                <th>Qty Keluar</th>
+                <th>Nilai</th>
+                <th>Diminta Oleh</th>
+                <th>Disetujui</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody class="small">
+              <tr>
+                <td><span class="font-monospace fw-bold text-dark">DOUT-001</span></td>
+                <td>
+                  <div class="font-monospace" style="font-size: 12px;">2026-06-02</div>
+                  <div class="text-muted" style="font-size: 11px;">08:15</div>
+                </td>
+                <td><span class="font-monospace text-warning fw-bold">SKU-001</span></td>
+                <td>
+                  <div class="fw-bold">Laptop Asus ROG</div>
+                  <div class="text-muted" style="font-size: 11px;">📝 Alokasi untuk divisi Dev</div>
+                </td>
+                <td>IT Developer Dept</td>
+                <td><span class="badge bg-info text-white rounded-pill">Internal Transfer</span></td>
+                <td class="font-monospace text-warning fw-bold">2 pcs</td>
+                <td class="font-monospace fw-semibold">$3,000.00</td>
+                <td>Rian Admin</td>
+                <td>Hendra Manager</td>
+                <td><span class="badge bg-success">Dispatched</span></td>
+              </tr>
+              <tr>
+                <td><span class="font-monospace fw-bold text-dark">DOUT-002</span></td>
+                <td>
+                  <div class="font-monospace" style="font-size: 12px;">2026-06-04</div>
+                  <div class="text-muted" style="font-size: 11px;">11:00</div>
+                </td>
+                <td><span class="font-monospace text-warning fw-bold">SKU-002</span></td>
+                <td>
+                  <div class="fw-bold">Logitech G Pro X Wireless</div>
+                </td>
+                <td>Production Line A</td>
+                <td><span class="badge bg-secondary rounded-pill">Internal Use</span></td>
+                <td class="font-monospace text-warning fw-bold">5 pcs</td>
+                <td class="font-monospace fw-semibold">$625.00</td>
+                <td>Siti Rahma</td>
+                <td>Hendra Manager</td>
+                <td><span class="badge bg-success">Dispatched</span></td>
+              </tr>
+              <tr>
+                <td><span class="font-monospace fw-bold text-dark">DOUT-003</span></td>
+                <td>
+                  <div class="font-monospace" style="font-size: 12px;">2026-06-06</div>
+                  <div class="text-muted" style="font-size: 11px;">15:30</div>
+                </td>
+                <td><span class="font-monospace text-warning fw-bold">SKU-003</span></td>
+                <td>
+                  <div class="fw-bold">Monitor Dell 24 Inch</div>
+                  <div class="text-muted" style="font-size: 11px;">📝 Kirim ke Toko Cabang</div>
+                </td>
+                <td>Malang Branch Customer</td>
+                <td><span class="badge bg-warning text-dark rounded-pill">Outbound Shipment</span></td>
+                <td class="font-monospace text-warning fw-bold">2 unit</td>
+                <td class="font-monospace fw-semibold">$450.00</td>
+                <td>Budi Santoso</td>
+                <td>Agus Head</td>
+                <td><span class="badge bg-success">Dispatched</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <?php endforeach; ?>
-  </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold text-secondary">Ringkasan Pengeluaran per SKU</h5>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 bg-light-subtle border-light-subtle">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="font-monospace text-warning fw-bold small">SKU-001</span>
+                  <span class="badge bg-secondary-subtle text-dark rounded-pill">1 txn</span>
+                </div>
+                <h6 class="card-title fw-bold text-truncate">Laptop Asus ROG</h6>
+                <hr class="my-2 opacity-50">
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-muted">Total Keluar</span>
+                  <span class="text-warning fw-bold">2 pcs</span>
+                </div>
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-muted">Total Nilai</span>
+                  <span class="fw-semibold">$3,000.00</span>
+                </div>
+                <div class="d-flex justify-content-between small">
+                  <span class="text-muted">Stok Saat Ini</span>
+                  <span class="fw-bold">15</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 bg-light-subtle border-light-subtle">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="font-monospace text-warning fw-bold small">SKU-002</span>
+                  <span class="badge bg-secondary-subtle text-dark rounded-pill">1 txn</span>
+                </div>
+                <h6 class="card-title fw-bold text-truncate">Logitech G Pro X Wireless</h6>
+                <hr class="my-2 opacity-50">
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-muted">Total Keluar</span>
+                  <span class="text-warning fw-bold">5 pcs</span>
+                </div>
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-muted">Total Nilai</span>
+                  <span class="fw-semibold">$625.00</span>
+                </div>
+                <div class="d-flex justify-content-between small">
+                  <span class="text-muted">Stok Saat Ini</span>
+                  <span class="fw-bold">45</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 bg-light-subtle border-light-subtle">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="font-monospace text-warning fw-bold small">SKU-003</span>
+                  <span class="badge bg-secondary-subtle text-dark rounded-pill">1 txn</span>
+                </div>
+                <h6 class="card-title fw-bold text-truncate">Monitor Dell 24 Inch</h6>
+                <hr class="my-2 opacity-50">
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-muted">Total Keluar</span>
+                  <span class="text-warning fw-bold">2 unit</span>
+                </div>
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-muted">Total Nilai</span>
+                  <span class="fw-semibold">$450.00</span>
+                </div>
+                <div class="d-flex justify-content-between small">
+                  <span class="text-muted">Stok Saat Ini</span>
+                  <span class="fw-bold">8</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-white py-3">
+        <h5 class="mb-0 fw-bold text-secondary">Distribusi Jenis Pengeluaran</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <div class="d-flex justify-content-between small fw-semibold mb-1">
+            <span><span class="text-info me-2">●</span>Internal Transfer</span>
+            <span class="text-muted">73% ($3,000.00)</span>
+          </div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-info" role="progressbar" style="width: 73%" aria-valuenow="73" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between small fw-semibold mb-1">
+            <span><span class="text-secondary me-2">●</span>Internal Use</span>
+            <span class="text-muted">15% ($625.00)</span>
+          </div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-secondary" role="progressbar" style="width: 15%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+        <div class="mb-0">
+          <div class="d-flex justify-content-between small fw-semibold mb-1">
+            <span><span class="text-warning me-2">●</span>Outbound Shipment</span>
+            <span class="text-muted">12% ($450.00)</span>
+          </div>
+          <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-warning" role="progressbar" style="width: 12%" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
 </div>
 
 <script>
-function toggleFormOut(id) {
-  const el = document.getElementById(id);
-  const btn = document.querySelector('.dout-form-panel .toggle-form-btn');
-  if (el.style.display === 'none') {
-    el.style.display = 'block'; btn.textContent = 'Tutup Form ▴';
-  } else {
-    el.style.display = 'none'; btn.textContent = 'Buka Form ▾';
-  }
-}
+$(document).ready(function() {
+  // Inisialisasi DataTables terintegrasi Bootstrap 5
+  $('#dout-table').DataTable({
+    "pageLength": 10,
+    "responsive": true,
+    "language": {
+      "search": "Cari data:",
+      "lengthMenu": "Tampilkan _MENU_ entri",
+      "zeroRecords": "Data tidak ditemukan",
+      "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+      "infoEmpty": "Menampilkan 0 sampai 0 dari 0 entri",
+      "infoFiltered": "(disaring dari _MAX_ total entri)",
+      "paginate": {
+        "next": "›",
+        "previous": "‹"
+      }
+    }
+  });
+
+  // Sinkronisasi teks status tombol saat collapse Bootstrap dipicu
+  const myCollapseOut = document.getElementById('dout-form-collapse');
+  const toggleBtnOut = document.getElementById('toggle-form-btn-out');
+  
+  myCollapseOut.addEventListener('shown.bs.collapse', function () {
+    toggleBtnOut.textContent = 'Tutup Form ▴';
+  });
+  myCollapseOut.addEventListener('hidden.bs.collapse', function () {
+    toggleBtnOut.textContent = 'Buka Form ▾';
+  });
+});
 
 let currentStock = 0;
 let unitCost = 0;
@@ -270,10 +382,12 @@ function fillItemOut(sel) {
   const opt = sel.options[sel.selectedIndex];
   document.getElementById('dout-item-name').value = opt.dataset.name || '';
   document.getElementById('dout-unit').value       = opt.dataset.unit || '';
+  
   currentStock = parseInt(opt.dataset.stock) || 0;
   unitCost     = parseFloat(opt.dataset.cost) || 0;
+  
   document.getElementById('dout-stock').value = opt.dataset.stock
-    ? number_format(currentStock) + ' ' + opt.dataset.unit
+    ? currentStock + ' ' + opt.dataset.unit
     : '—';
   checkStock();
 }
@@ -281,30 +395,18 @@ function fillItemOut(sel) {
 function checkStock() {
   const qty = parseInt(document.getElementById('dout-qty').value) || 0;
   const warn = document.getElementById('dout-stock-warn');
+  
   if (qty > currentStock && currentStock > 0) {
-    warn.style.display = 'block';
+    warn.classList.remove('d-none');
   } else {
-    warn.style.display = 'none';
+    warn.classList.add('d-none');
   }
+  
   const val = qty * unitCost;
-  document.getElementById('dout-value').value = val > 0 ? '$' + val.toFixed(2) : '—';
-}
-
-function number_format(n) {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('dout-value').value = val > 0 ? '$' + val.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '—';
 }
 
 function submitForm(type) {
   alert('Pengeluaran berhasil dicatat! (Demo — tidak tersimpan ke database)');
-}
-
-function filterDout() {
-  const q  = document.getElementById('dout-search').value.toLowerCase();
-  const tp = document.getElementById('dout-filter-type').value.toLowerCase();
-  document.querySelectorAll('.dout-row').forEach(r => {
-    const matchQ  = r.dataset.search.includes(q);
-    const matchTp = !tp || r.dataset.type.includes(tp);
-    r.style.display = matchQ && matchTp ? '' : 'none';
-  });
 }
 </script>

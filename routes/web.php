@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use PhpParser\Node\Expr\Assign;
 
 Route::get('/', function () {
-    return view('pages.dashboard');
+    return view('pages.report');
 });
 
 Route::apiResource('/role', RolesController::class);

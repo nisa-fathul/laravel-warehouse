@@ -1,244 +1,342 @@
-<?php
-// pages/delivery_in.php
-$total_qty_in   = array_sum(array_column($delivery_in, 'qty_received'));
-$total_value_in = array_sum(array_map(fn($d) => $d['qty_received'] * $d['unit_cost'], $delivery_in));
-$complete_count = count(array_filter($delivery_in, fn($d) => $d['status']==='Complete'));
-$partial_count  = count(array_filter($delivery_in, fn($d) => $d['status']==='Partial'));
+@extends('html.html')
 
-// Build SKU index for quick lookup
-$inv_index = [];
-foreach ($inventory as $item) $inv_index[$item['id']] = $item;
-?>
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+@endpush
 
-<!-- KPI Strip -->
-<div class="kpi-grid" style="grid-template-columns:repeat(4,1fr); margin-bottom:1.5rem">
-  <div class="kpi-card accent">
-    <div class="kpi-label">Total Penerimaan</div>
-    <div class="kpi-value"><?= count($delivery_in) ?></div>
-    <div class="kpi-sub">Dokumen masuk</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">Nilai Barang Masuk</div>
-    <div class="kpi-value">$<?= fmt($total_value_in) ?></div>
-    <div class="kpi-sub">Total nilai diterima</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">Selesai</div>
-    <div class="kpi-value"><?= $complete_count ?></div>
-    <div class="kpi-sub">Penerimaan lengkap</div>
-  </div>
-  <div class="kpi-card <?= $partial_count > 0 ? 'warn' : '' ?>">
-    <div class="kpi-label">Sebagian / Rusak</div>
-    <div class="kpi-value"><?= $partial_count ?></div>
-    <div class="kpi-sub">Perlu tindak lanjut</div>
-  </div>
-</div>
+@section('content')
+@include('components.navbar')
+@include('components.sidebar')
 
-<!-- Form: Tambah Penerimaan -->
-<div class="panel din-form-panel" style="margin-bottom:1.5rem">
-  <div class="panel-head">
-    <span>+ Catat Penerimaan Baru</span>
-    <button class="toggle-form-btn" onclick="toggleForm('din-form')">Buka Form ▾</button>
-  </div>
-  <div id="din-form" style="display:none">
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Tanggal Terima</label>
-        <input type="date" class="form-input" value="<?= date('Y-m-d') ?>">
-      </div>
-      <div class="form-group">
-        <label>Waktu</label>
-        <input type="time" class="form-input" value="<?= date('H:i') ?>">
-      </div>
-      <div class="form-group">
-        <label>Pilih SKU / Barang</label>
-        <select class="form-input" onchange="fillItem(this)">
-          <option value="">— Pilih item —</option>
-          <?php foreach ($inventory as $item): ?>
-          <option value="<?= $item['id'] ?>" data-name="<?= htmlspecialchars($item['name']) ?>" data-unit="<?= $item['unit'] ?>" data-cost="<?= $item['unit_cost'] ?>">
-            <?= $item['id'] ?> — <?= htmlspecialchars($item['name']) ?>
-          </option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Nama Barang</label>
-        <input type="text" class="form-input" id="din-item-name" placeholder="Otomatis terisi" readonly>
-      </div>
-      <div class="form-group">
-        <label>Supplier</label>
-        <input type="text" class="form-input" placeholder="Nama supplier">
-      </div>
-      <div class="form-group">
-        <label>No. PO Referensi</label>
-        <input type="text" class="form-input" placeholder="PO-XXXX-XXX (opsional)">
-      </div>
-      <div class="form-group">
-        <label>Qty Dipesan</label>
-        <input type="number" class="form-input" placeholder="0" id="din-qty-ordered">
-      </div>
-      <div class="form-group">
-        <label>Qty Diterima</label>
-        <input type="number" class="form-input" placeholder="0" id="din-qty-received">
-      </div>
-      <div class="form-group">
-        <label>Satuan</label>
-        <input type="text" class="form-input" id="din-unit" placeholder="pcs / L / kg" readonly>
-      </div>
-      <div class="form-group">
-        <label>Harga Satuan ($)</label>
-        <input type="number" class="form-input" id="din-cost" placeholder="0.00" step="0.01">
-      </div>
-      <div class="form-group">
-        <label>Kondisi Barang</label>
-        <select class="form-input">
-          <option>Good</option>
-          <option>Damaged</option>
-          <option>Partial Damage</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Diterima Oleh</label>
-        <input type="text" class="form-input" placeholder="Nama petugas">
-      </div>
-      <div class="form-group form-full">
-        <label>Catatan</label>
-        <textarea class="form-input" rows="2" placeholder="Catatan penerimaan..."></textarea>
+<main class="container-fluid py-4">
+  
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card h-100 border-start border-primary border-4 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small fw-bold text-uppercase">Total Penerimaan</div>
+          <div class="fs-3 fw-bold my-1">3</div>
+          <div class="text-secondary small">Dokumen masuk</div>
+        </div>
       </div>
     </div>
-    <div class="form-actions">
-      <button class="btn-primary" onclick="submitForm('din')">✓ Simpan Penerimaan</button>
-      <button class="btn-ghost" onclick="toggleForm('din-form')">Batal</button>
-    </div>
-  </div>
-</div>
-
-<!-- Tabel Riwayat Delivery In -->
-<div class="panel">
-  <div class="panel-head">
-    <span>Riwayat Penerimaan Barang (<?= count($delivery_in) ?> dokumen)</span>
-    <div class="filter-row">
-      <select class="form-input form-input-sm" id="din-filter-status" onchange="filterDin()">
-        <option value="">Semua Status</option>
-        <option value="complete">Complete</option>
-        <option value="partial">Partial</option>
-      </select>
-      <input type="text" class="search-input" id="din-search" placeholder="Cari item / supplier…" oninput="filterDin()">
-    </div>
-  </div>
-  <div class="table-wrap">
-    <table class="data-table" id="din-table">
-      <thead>
-        <tr>
-          <th>No. Dokumen</th>
-          <th>Tanggal</th>
-          <th>SKU</th>
-          <th>Nama Barang</th>
-          <th>Supplier</th>
-          <th>Ref PO</th>
-          <th>Qty Dipesan</th>
-          <th>Qty Diterima</th>
-          <th>Selisih</th>
-          <th>Nilai</th>
-          <th>Kondisi</th>
-          <th>Diterima Oleh</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($delivery_in as $d):
-          $diff = $d['qty_received'] - $d['qty_ordered'];
-          $value = $d['qty_received'] * $d['unit_cost'];
-          $cond_class = $d['condition'] === 'Good' ? 'badge-ok' : 'badge-crit';
-        ?>
-        <tr class="din-row"
-            data-search="<?= strtolower($d['item'].' '.$d['supplier'].' '.$d['sku']) ?>"
-            data-status="<?= strtolower($d['status']) ?>">
-          <td><span class="mono doc-id"><?= $d['id'] ?></span></td>
-          <td>
-            <div class="mono" style="font-size:11px"><?= $d['date'] ?></div>
-            <div class="item-supplier"><?= $d['time'] ?></div>
-          </td>
-          <td><span class="mono text-accent"><?= $d['sku'] ?></span></td>
-          <td>
-            <div class="item-name"><?= htmlspecialchars($d['item']) ?></div>
-            <?php if ($d['notes']): ?>
-            <div class="item-supplier" title="<?= htmlspecialchars($d['notes']) ?>">📝 <?= mb_strimwidth($d['notes'],0,40,'…') ?></div>
-            <?php endif; ?>
-          </td>
-          <td><?= htmlspecialchars($d['supplier']) ?></td>
-          <td>
-            <?php if ($d['ref_po']): ?>
-              <span class="badge-pill badge-neutral"><?= $d['ref_po'] ?></span>
-            <?php else: ?>
-              <span class="text-muted">—</span>
-            <?php endif; ?>
-          </td>
-          <td class="mono"><?= number_format($d['qty_ordered']) ?> <?= $d['unit'] ?></td>
-          <td class="mono"><?= number_format($d['qty_received']) ?> <?= $d['unit'] ?></td>
-          <td class="mono <?= $diff < 0 ? 'text-danger' : ($diff > 0 ? 'text-ok' : 'text-muted') ?>">
-            <?= $diff === 0 ? '—' : ($diff > 0 ? '+' : '') . number_format($diff) ?>
-          </td>
-          <td class="mono">$<?= number_format($value, 2) ?></td>
-          <td><span class="badge-pill <?= $cond_class ?>"><?= $d['condition'] ?></span></td>
-          <td><?= htmlspecialchars($d['received_by']) ?></td>
-          <td>
-            <?php if ($d['status']==='Complete'): ?>
-              <span class="status-tag status-tag-ok">Complete</span>
-            <?php else: ?>
-              <span class="status-tag status-tag-warning">Partial</span>
-            <?php endif; ?>
-          </td>
-        </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Summary per SKU -->
-<div class="panel" style="margin-top:1.5rem">
-  <div class="panel-head"><span>Ringkasan Penerimaan per SKU</span></div>
-  <div class="sku-summary-grid">
-    <?php
-    $sku_in = [];
-    foreach ($delivery_in as $d) {
-      if (!isset($sku_in[$d['sku']])) $sku_in[$d['sku']] = ['name'=>$d['item'],'qty'=>0,'value'=>0,'txn'=>0];
-      $sku_in[$d['sku']]['qty']   += $d['qty_received'];
-      $sku_in[$d['sku']]['value'] += $d['qty_received'] * $d['unit_cost'];
-      $sku_in[$d['sku']]['txn']++;
-    }
-    foreach ($sku_in as $sku => $s):
-      $item = $inv_index[$sku] ?? null;
-    ?>
-    <div class="sku-sum-card din-card">
-      <div class="sku-sum-head">
-        <span class="mono text-accent" style="font-size:11px"><?= $sku ?></span>
-        <span class="badge-pill badge-info"><?= $s['txn'] ?> txn</span>
-      </div>
-      <div class="sku-sum-name"><?= htmlspecialchars($s['name']) ?></div>
-      <div class="sku-sum-rows">
-        <div class="sku-sum-row"><span>Total Diterima</span><strong class="text-accent"><?= number_format($s['qty']) ?> <?= $item['unit'] ?? '' ?></strong></div>
-        <div class="sku-sum-row"><span>Total Nilai</span><strong>$<?= fmt($s['value']) ?></strong></div>
-        <div class="sku-sum-row"><span>Stok Saat Ini</span><strong><?= $item ? number_format($item['stock']) : '—' ?></strong></div>
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card h-100 border-start border-success border-4 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small fw-bold text-uppercase">Nilai Barang Masuk</div>
+          <div class="fs-3 fw-bold my-1">$10,750.00</div>
+          <div class="text-secondary small">Total nilai diterima</div>
+        </div>
       </div>
     </div>
-    <?php endforeach; ?>
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card h-100 border-start border-info border-4 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small fw-bold text-uppercase">Selesai</div>
+          <div class="fs-3 fw-bold my-1">2</div>
+          <div class="text-secondary small">Penerimaan lengkap</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card h-100 border-start border-warning border-4 shadow-sm">
+        <div class="card-body">
+          <div class="text-muted small fw-bold text-uppercase">Sebagian / Rusak</div>
+          <div class="fs-3 fw-bold my-1 text-warning">1</div>
+          <div class="text-secondary small">Perlu tindak lanjut</div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+      <h5 class="mb-0 fw-bold text-secondary">+ Catat Penerimaan Baru</h5>
+      <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#din-form-collapse" aria-expanded="false" aria-controls="din-form-collapse" id="toggle-form-btn">
+        Buka Form ▾
+      </button>
+    </div>
+    <div class="collapse" id="din-form-collapse">
+      <div class="card-body bg-light-subtle">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Tanggal Terima</label>
+            <input type="date" class="form-control" value="2026-06-08">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Waktu</label>
+            <input type="time" class="form-control" value="15:00">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Pilih SKU / Barang</label>
+            <select class="form-select" onchange="fillItem(this)">
+              <option value="">— Pilih item —</option>
+              <option value="SKU-001" data-name="Laptop Asus ROG" data-unit="pcs" data-cost="1500.00">SKU-001 — Laptop Asus ROG</option>
+              <option value="SKU-002" data-name="Logitech G Pro X Wireless" data-unit="pcs" data-cost="125.00">SKU-002 — Logitech G Pro X Wireless</option>
+              <option value="SKU-003" data-name="Monitor Dell 24 Inch" data-unit="unit" data-cost="200.00">SKU-003 — Monitor Dell 24 Inch</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Nama Barang</label>
+            <input type="text" class="form-control" id="din-item-name" placeholder="Otomatis terisi" readonly>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Supplier</label>
+            <input type="text" class="form-control" placeholder="Nama supplier">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">No. PO Referensi</label>
+            <input type="text" class="form-control" placeholder="PO-XXXX-XXX (opsional)">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Qty Dipesan</label>
+            <input type="number" class="form-control" placeholder="0">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Qty Diterima</label>
+            <input type="number" class="form-control" placeholder="0">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Satuan</label>
+            <input type="text" class="form-control" id="din-unit" placeholder="pcs / L / kg" readonly>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Harga Satuan ($)</label>
+            <input type="number" class="form-control" id="din-cost" placeholder="0.00" step="0.01">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small fw-semibold">Kondisi Barang</label>
+            <select class="form-select">
+              <option>Good</option>
+              <option>Damaged</option>
+              <option>Partial Damage</option>
+            </select>
+          </div>
+          <div class="col-md-8">
+            <label class="form-label small fw-semibold">Diterima Oleh</label>
+            <input type="text" class="form-control" placeholder="Nama petugas">
+          </div>
+          <div class="col-12">
+            <label class="form-label small fw-semibold">Catatan</label>
+            <textarea class="form-control" rows="2" placeholder="Catatan penerimaan..."></textarea>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-top d-flex gap-2">
+          <button class="btn btn-primary" onclick="submitForm('din')">✓ Simpan Penerimaan</button>
+          <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#din-form-collapse">Batal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white py-3">
+      <h5 class="mb-0 fw-bold text-secondary">Riwayat Penerimaan Barang</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle w-100" id="din-table">
+          <thead class="table-light text-secondary small text-uppercase">
+            <tr>
+              <th>No. Dokumen</th>
+              <th>Tanggal / Waktu</th>
+              <th>SKU</th>
+              <th>Nama Barang</th>
+              <th>Supplier</th>
+              <th>Ref PO</th>
+              <th>Qty Dipesan</th>
+              <th>Qty Diterima</th>
+              <th>Selisih</th>
+              <th>Nilai</th>
+              <th>Kondisi</th>
+              <th>Diterima Oleh</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody class="small">
+            <tr>
+              <td><span class="font-monospace fw-bold text-dark">DIN-001</span></td>
+              <td>
+                <div class="font-monospace" style="font-size: 12px;">2026-06-05</div>
+                <div class="text-muted" style="font-size: 11px;">10:30</div>
+              </td>
+              <td><span class="font-monospace text-primary fw-bold">SKU-001</span></td>
+              <td>
+                <div class="fw-bold">Laptop Asus ROG</div>
+                <div class="text-muted" style="font-size: 11px;">📝 Dus agak penyok dikit luar...</div>
+              </td>
+              <td>PT. Asus Indonesia</td>
+              <td><span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">PO-2026-001</span></td>
+              <td class="font-monospace">5 pcs</td>
+              <td class="font-monospace">5 pcs</td>
+              <td class="font-monospace text-muted">—</td>
+              <td class="font-monospace fw-semibold">$7,500.00</td>
+              <td><span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Good</span></td>
+              <td>Budi Santoso</td>
+              <td><span class="badge bg-success">Complete</span></td>
+            </tr>
+            <tr>
+              <td><span class="font-monospace fw-bold text-dark">DIN-002</span></td>
+              <td>
+                <div class="font-monospace" style="font-size: 12px;">2026-06-06</div>
+                <div class="text-muted" style="font-size: 11px;">14:15</div>
+              </td>
+              <td><span class="font-monospace text-primary fw-bold">SKU-002</span></td>
+              <td>
+                <div class="fw-bold">Logitech G Pro X Wireless</div>
+                <div class="text-muted" style="font-size: 11px;">📝 2 Unit menyusul dari vendor</div>
+              </td>
+              <td>Logitech Official Store</td>
+              <td><span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">PO-2026-004</span></td>
+              <td class="font-monospace">12 pcs</td>
+              <td class="font-monospace">10 pcs</td>
+              <td class="font-monospace text-danger fw-bold">-2</td>
+              <td class="font-monospace fw-semibold">$1,250.00</td>
+              <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">Partial Damage</span></td>
+              <td>Siti Rahma</td>
+              <td><span class="badge bg-warning text-dark">Partial</span></td>
+            </tr>
+            <tr>
+              <td><span class="font-monospace fw-bold text-dark">DIN-003</span></td>
+              <td>
+                <div class="font-monospace" style="font-size: 12px;">2026-06-07</div>
+                <div class="text-muted" style="font-size: 11px;">09:00</div>
+              </td>
+              <td><span class="font-monospace text-primary fw-bold">SKU-003</span></td>
+              <td>
+                <div class="fw-bold">Monitor Dell 24 Inch</div>
+              </td>
+              <td>Dell Corp Indonesia</td>
+              <td><span class="text-muted">—</span></td>
+              <td class="font-monospace">10 unit</td>
+              <td class="font-monospace">10 unit</td>
+              <td class="font-monospace text-muted">—</td>
+              <td class="font-monospace fw-semibold">$2,000.00</td>
+              <td><span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Good</span></td>
+              <td>Budi Santoso</td>
+              <td><span class="badge bg-success">Complete</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-white py-3">
+      <h5 class="mb-0 fw-bold text-secondary">Ringkasan Penerimaan per SKU</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 bg-light-subtle border-light-subtle">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="font-monospace text-primary fw-bold small">SKU-001</span>
+                <span class="badge bg-info-subtle text-info-emphasis rounded-pill">1 txn</span>
+              </div>
+              <h6 class="card-title fw-bold text-truncate">Laptop Asus ROG</h6>
+              <hr class="my-2 opacity-50">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Diterima</span>
+                <span class="text-primary fw-bold">5 pcs</span>
+              </div>
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Nilai</span>
+                <span class="fw-semibold">$7,500.00</span>
+              </div>
+              <div class="d-flex justify-content-between small">
+                <span class="text-muted">Stok Saat Ini</span>
+                <span class="fw-bold">15</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 bg-light-subtle border-light-subtle">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="font-monospace text-primary fw-bold small">SKU-002</span>
+                <span class="badge bg-info-subtle text-info-emphasis rounded-pill">1 txn</span>
+              </div>
+              <h6 class="card-title fw-bold text-truncate">Logitech G Pro X Wireless</h6>
+              <hr class="my-2 opacity-50">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Diterima</span>
+                <span class="text-primary fw-bold">10 pcs</span>
+              </div>
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Nilai</span>
+                <span class="fw-semibold">$1,250.00</span>
+              </div>
+              <div class="d-flex justify-content-between small">
+                <span class="text-muted">Stok Saat Ini</span>
+                <span class="fw-bold">45</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 bg-light-subtle border-light-subtle">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="font-monospace text-primary fw-bold small">SKU-003</span>
+                <span class="badge bg-info-subtle text-info-emphasis rounded-pill">1 txn</span>
+              </div>
+              <h6 class="card-title fw-bold text-truncate">Monitor Dell 24 Inch</h6>
+              <hr class="my-2 opacity-50">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Diterima</span>
+                <span class="text-primary fw-bold">10 unit</span>
+              </div>
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-muted">Total Nilai</span>
+                <span class="fw-semibold">$2,000.00</span>
+              </div>
+              <div class="d-flex justify-content-between small">
+                <span class="text-muted">Stok Saat Ini</span>
+                <span class="fw-bold">8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
 
 <script>
-function toggleForm(id) {
-  const el = document.getElementById(id);
-  const btn = document.querySelector('.toggle-form-btn');
-  if (el.style.display === 'none') {
-    el.style.display = 'block';
-    btn.textContent = 'Tutup Form ▴';
-  } else {
-    el.style.display = 'none';
-    btn.textContent = 'Buka Form ▾';
-  }
-}
+$(document).ready(function() {
+  // Inisialisasi DataTables terintegrasi styling Bootstrap 5
+  $('#din-table').DataTable({
+    "pageLength": 10,
+    "responsive": true,
+    "language": {
+      "search": "Cari data:",
+      "lengthMenu": "Tampilkan _MENU_ entri",
+      "zeroRecords": "Data tidak ditemukan",
+      "info": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+      "infoEmpty": "Menampilkan 0 sampai 0 dari 0 entri",
+      "infoFiltered": "(disaring dari _MAX_ total entri)",
+      "paginate": {
+        "next": "›",
+        "previous": "‹"
+      }
+    }
+  });
+
+  // Sinkronisasi teks status tombol saat collapse Bootstrap dipicu
+  const myCollapse = document.getElementById('din-form-collapse');
+  const toggleBtn = document.getElementById('toggle-form-btn');
+  
+  myCollapse.addEventListener('shown.bs.collapse', function () {
+    toggleBtn.textContent = 'Tutup Form ▴';
+  });
+  myCollapse.addEventListener('hidden.bs.collapse', function () {
+    toggleBtn.textContent = 'Buka Form ▾';
+  });
+});
 
 function fillItem(sel) {
   const opt = sel.options[sel.selectedIndex];
@@ -252,15 +350,5 @@ function submitForm(type) {
     ? 'Penerimaan berhasil dicatat! (Demo — tidak tersimpan ke database)'
     : 'Pengiriman berhasil dicatat!';
   alert(msg);
-}
-
-function filterDin() {
-  const q   = document.getElementById('din-search').value.toLowerCase();
-  const st  = document.getElementById('din-filter-status').value.toLowerCase();
-  document.querySelectorAll('.din-row').forEach(r => {
-    const matchQ  = r.dataset.search.includes(q);
-    const matchSt = !st || r.dataset.status.includes(st);
-    r.style.display = matchQ && matchSt ? '' : 'none';
-  });
 }
 </script>
