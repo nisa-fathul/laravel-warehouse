@@ -47,189 +47,156 @@
 @include('components.sidebar')
 
 <main id="main" class="main">
-    <div class="card shadow-sm mb-4">
 
-        <div class="card-body">
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3"></div>
+<div class="container-fluid">
 
-            <h4 class="card-title mb-2">
-                Demand Forecasting — Next 6 Months
-            </h4>
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
 
-            <p class="text-muted mb-0">
-                Predictions use weighted moving average with seasonal trend analysis.
-                Confidence interval ±12%.
-            </p>
+        <h5 class="mb-4">Parameter Forecast</h5>
 
-        </div>
+        <form method="GET">
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <label class="form-label">Nama Barang</label>
+                    <select class="form-select">
+                        <option>-- Pilih Barang --</option>
+                        <option>Switch</option>
+                        <option>Safety Rotating Hub</option>
+                        <option>Key Holder Assy Grey</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Periode Data</label>
+                    <select class="form-select">
+                        <option>3 Bulan</option>
+                        <option>6 Bulan</option>
+                        <option>12 Bulan</option>
+                        <option>7 Hari</option>
+                        <option>14 Hari</option>
+                        <option>30 Hari</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Tanggal Awal</label>
+                    <input type="date" class="form-control">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Tanggal Akhir</label>
+                    <input type="date" class="form-control">
+                </div>
+
+                <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary w-100">
+                        Hitung Forecast
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
 
     </div>
+</div>
 
-    <div class="row g-4">
+<div class="card shadow-sm">
 
-        <!-- Product 1 -->
-        <div class="col-xl-6">
+    <div class="card-header">
+        <h5 class="mb-0">Hasil Forecasting</h5>
+    </div>
 
-            <div class="card shadow-sm h-100">
+    <div class="card-body">
 
-                <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="table-responsive">
 
-                    <div>
-                        <h5 class="mb-0">
-                            Steel Plate A36
-                        </h5>
+            <table id="forecastTable"
+                   class="table table-bordered table-hover">
 
-                        <small class="text-muted">
-                            SKU001 • Raw Material • PT Baja Indonesia
-                        </small>
-                    </div>
+                <thead class="table-light">
+                <tr>
+                    <th>No</th>
+                    <th>Nama Barang</th>
+                    <th>Periode</th>
+                    <th>Bulan</th>
+                    <th>Total Penjualan</th>
+                    <th>Rata-rata (MA)</th>
+                    <th>Forecast</th>
+                    <th>MAPE (%)</th>
+                    <th>Akurasi (%)</th>
+                    <th>Stok Saat Ini</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
 
-                    <div>
+                <tbody>
+
+                <tr>
+                    <td>1</td>
+                    <td>Switch</td>
+                    <td>3 Bulan</td>
+                    <td>Desember 2025</td>
+                    <td>16.731</td>
+                    <td>16.995</td>
+                    <td>17.025</td>
+                    <td>1.76</td>
+                    <td>98.24</td>
+                    <td>10</td>
+                    <td>
+                        <span class="badge bg-warning">
+                            Pesan 7
+                        </span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td>Safety Rotating Hub</td>
+                    <td>3 Bulan</td>
+                    <td>Desember 2025</td>
+                    <td>60.000</td>
+                    <td>80.000</td>
+                    <td>73.333</td>
+                    <td>22.22</td>
+                    <td>77.78</td>
+                    <td>120</td>
+                    <td>
                         <span class="badge bg-success">
-                            LOW RISK
+                            Cukup
                         </span>
+                    </td>
+                </tr>
 
-                        <span class="badge bg-primary">
-                            6.5 Months Coverage
-                        </span>
-                    </div>
+                </tbody>
 
-                </div>
-
-                <div class="card-body">
-
-                    <div id="forecastChart1" style="height:300px;"></div>
-
-                    <div class="table-responsive mt-4">
-
-                        <table class="table table-bordered">
-
-                            <tbody>
-
-                                <tr>
-                                    <th>Average Monthly Demand</th>
-                                    <td>375 KG</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Current Stock</th>
-                                    <td>2,450 KG</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Reorder Point</th>
-                                    <td>500 KG</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Lead Time</th>
-                                    <td>14 Days</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Safety Stock</th>
-                                    <td>210 KG</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Suggested Reorder</th>
-                                    <td>750 KG</td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- Product 2 -->
-        <div class="col-xl-6">
-
-            <div class="card shadow-sm h-100">
-
-                <div class="card-header d-flex justify-content-between align-items-center">
-
-                    <div>
-                        <h5 class="mb-0">
-                            Aluminium Sheet
-                        </h5>
-
-                        <small class="text-muted">
-                            SKU002 • Material • PT Aluminium Jaya
-                        </small>
-                    </div>
-
-                    <div>
-                        <span class="badge bg-warning text-dark">
-                            MEDIUM RISK
-                        </span>
-
-                        <span class="badge bg-primary">
-                            2.8 Months Coverage
-                        </span>
-                    </div>
-
-                </div>
-
-                <div class="card-body">
-
-                    <div id="forecastChart2" style="height:300px;"></div>
-
-                    <div class="table-responsive mt-4">
-
-                        <table class="table table-bordered">
-
-                            <tbody>
-
-                                <tr>
-                                    <th>Average Monthly Demand</th>
-                                    <td>185 PCS</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Current Stock</th>
-                                    <td>520 PCS</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Reorder Point</th>
-                                    <td>400 PCS</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Lead Time</th>
-                                    <td>10 Days</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Safety Stock</th>
-                                    <td>120 PCS</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Suggested Reorder</th>
-                                    <td>370 PCS</td>
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </div>
+            </table>
 
         </div>
 
     </div>
-</main>
 
+</div>
+<div class="card shadow-sm mt-4">
+
+    <div class="card-header">
+        <h5 class="mb-0">
+            Tren Permintaan Barang
+        </h5>
+    </div>
+
+    <div class="card-body">
+
+        <canvas id="forecastChart"
+                height="100"></canvas>
+
+    </div>
+
+</div>
 @include('components.footer')
 @endsection

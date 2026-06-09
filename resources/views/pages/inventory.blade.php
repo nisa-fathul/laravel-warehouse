@@ -18,20 +18,62 @@
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">
-                Inventory Management(4 SKUs)
+                Inventory Management
             </h5>
         </div>
+        <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0 fw-bold text-secondary">+ Add Item</h5>
+            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                data-bs-target="#din-form-collapse" aria-expanded="false" aria-controls="din-form-collapse"
+                id="toggle-form-btn">
+                Open Form ▾
+            </button>
+        </div>
+        <div class="collapse" id="din-form-collapse">
+            <div class="card-body bg-light-subtle">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Part No</label>
+                        <input type="text" class="form-control" placeholder="Part No">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold">Part Name</label>
+                        <input type="text" class="form-control" placeholder="Part Name">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Supplier</label>
+                        <input type="text" class="form-control" placeholder="Supplier Name">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Stock</label>
+                        <input type="number" class="form-control" placeholder="0">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Unit</label>
+                        <input type="text" class="form-control" id="din-unit" placeholder="pcs / L / kg" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">Unit Cost ($)</label>
+                        <input type="number" class="form-control" id="din-cost" placeholder="0.00" step="0.01">
+                    </div>                   
+                <div class="mt-4 pt-3 border-top d-flex gap-2">
+                    <button class="btn btn-primary" onclick="submitForm('din')">✓ Save</button>
+                    <button class="btn btn-light" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#din-form-collapse">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>        
 
         <div class="card-body">
             <div class="table-responsive mt-3">
                 <table id="inventoryTable" class="table table-striped table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>SKU</th>
-                            <th>Product</th>
-                            <th>Category</th>
+                            <th>Part No</th>
+                            <th>Part Name</th>
                             <th>Stock</th>
-                            <th>Level</th>
                             <th>Unit Cost</th>
                             <th>Total Value</th>
                             <th>Lead Days</th>
@@ -50,19 +92,7 @@
                                     PT Baja Indonesia
                                 </small>
                             </td>
-                            <td>
-                                <span class="badge bg-primary">
-                                    Raw Material
-                                </span>
-                            </td>
                             <td>2,450 KG</td>
-                            <td>
-                                <div class="progress">
-                                    <div class="progress-bar bg-success" style="width:85%">
-                                        85%
-                                    </div>
-                                </div>
-                            </td>
                             <td>$25.00</td>
                             <td>$61,250</td>
                             <td>14</td>
@@ -82,19 +112,7 @@
                                     PT Aluminium Jaya
                                 </small>
                             </td>
-                            <td>
-                                <span class="badge bg-info">
-                                    Material
-                                </span>
-                            </td>
                             <td>520 PCS</td>
-                            <td>
-                                <div class="progress">
-                                    <div class="progress-bar bg-warning" style="width:45%">
-                                        45%
-                                    </div>
-                                </div>
-                            </td>
                             <td>$18.00</td>
                             <td>$9,360</td>
                             <td>10</td>
@@ -114,19 +132,7 @@
                                     Fastener Supplier
                                 </small>
                             </td>
-                            <td>
-                                <span class="badge bg-secondary">
-                                    Spare Part
-                                </span>
-                            </td>
                             <td>80 PCS</td>
-                            <td>
-                                <div class="progress">
-                                    <div class="progress-bar bg-danger" style="width:15%">
-                                        15%
-                                    </div>
-                                </div>
-                            </td>
                             <td>$0.50</td>
                             <td>$40</td>
                             <td>5</td>
@@ -145,19 +151,7 @@
                                     SKF Indonesia
                                 </small>
                             </td>
-                            <td>
-                                <span class="badge bg-dark">
-                                    Component
-                                </span>
-                            </td>
                             <td>1,250 PCS</td>
-                            <td>
-                                <div class="progress">
-                                    <div class="progress-bar bg-primary" style="width:65%">
-                                        65%
-                                    </div>
-                                </div>
-                            </td>
                             <td>$3.00</td>
                             <td>$3,750</td>
                             <td>7</td>
