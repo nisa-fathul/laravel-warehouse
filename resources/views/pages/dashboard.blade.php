@@ -70,8 +70,8 @@
 
     <div class="row mb-3">
         <!-- Stock Level -->
-        <div class="col-lg-7">
-            <div class="card shadow-sm h-100">
+        <div class="col-lg-12">
+            <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>Stock Level Overview</span>
                     <a href="#" class="btn btn-sm btn-outline-primary">
@@ -108,70 +108,6 @@
                             <div class="progress-bar bg-danger" style="width:15%"></div>
                         </div>
                     </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Category -->
-        <div class="col-lg-5">
-            <div class="card shadow-sm h-100">
-                <div class="card-header">
-                    Value By Category
-                </div>
-
-                <div class="card-body">
-
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <span>Raw Material</span>
-                            <strong>45%</strong>
-                        </div>
-
-                        <div class="progress">
-                            <div class="progress-bar" style="width:45%"></div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <span>Packaging</span>
-                            <strong>30%</strong>
-                        </div>
-
-                        <div class="progress">
-                            <div class="progress-bar bg-success" style="width:30%"></div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between">
-                            <span>Spare Part</span>
-                            <strong>25%</strong>
-                        </div>
-
-                        <div class="progress">
-                            <div class="progress-bar bg-warning" style="width:25%"></div>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <h6>Recent Alerts</h6>
-
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item text-danger">
-                            Critical stock for Hex Bolt M12
-                        </li>
-
-                        <li class="list-group-item text-warning">
-                            Low stock for Aluminium Sheet
-                        </li>
-
-                        <li class="list-group-item text-primary">
-                            Purchase Order pending approval
-                        </li>
-                    </ul>
 
                 </div>
             </div>

@@ -12,7 +12,8 @@ class barang extends Model
         'kode_barang',
         'nama_barang',
         'satuan',
-        'kategori',
+        'min_stok',
+        'harga',
     ];
 
     public function stok()

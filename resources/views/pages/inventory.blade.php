@@ -22,49 +22,127 @@
             </h5>
         </div>
         <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-            <h5 class="mb-0 fw-bold text-secondary">+ Add Item</h5>
-            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
-                data-bs-target="#din-form-collapse" aria-expanded="false" aria-controls="din-form-collapse"
-                id="toggle-form-btn">
-                Open Form ▾
-            </button>
-        </div>
-        <div class="collapse" id="din-form-collapse">
-            <div class="card-body bg-light-subtle">
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Part No</label>
-                        <input type="text" class="form-control" placeholder="Part No">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0 fw-bold text-secondary">+ Add Item</h5>
+                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#din-form-collapse" aria-expanded="false" aria-controls="din-form-collapse"
+                    id="toggle-form-btn">
+                    Open Form ▾
+                </button>
+            </div>
+            <div class="collapse" id="din-form-collapse">
+                <div class="card-body bg-light-subtle">
+                    <div class="row g-3">
+                        <div class="card-body bg-light-subtle">
+                            <form action="{{ route('inventory.create') }}" method="POST">
+                                @csrf
+                                @method('POST')
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold">
+                                            Part Number
+                                        </label>
+
+                                        <input type="text" name="kode_barang" value="{{ old('kode_barang') }}"
+                                            class="form-control @error('kode_barang') is-invalid @enderror"
+                                            placeholder="Enter Part Number">
+
+                                        @error('kode_barang')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold">
+                                            Part Name
+                                        </label>
+
+                                        <input type="text" name="nama_barang" value="{{ old('nama_barang') }}"
+                                            class="form-control @error('nama_barang') is-invalid @enderror"
+                                            placeholder="Enter Part Name">
+
+                                        @error('nama_barang')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">
+                                            Unit
+                                        </label>
+                                        <input type="text" name="satuan" value="{{ old('satuan') }}"
+                                            class="form-control @error('satuan') is-invalid @enderror"
+                                            placeholder="PCS / KG / LTR">
+                                        @error('satuan')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">
+                                            Minimum Stock
+                                        </label>
+                                        <input type="number" name="min_stok" value="{{ old('min_stok') }}"
+                                            class="form-control @error('min_stok') is-invalid @enderror"
+                                            placeholder="Enter Minimum Stock">
+                                        @error('min_stok')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">
+                                            Stock
+                                        </label>
+                                        <input type="number" name="stok" value="{{ old('stok') }}"
+                                            class="form-control @error('stok') is-invalid @enderror"
+                                            placeholder="Enter Actual Stock">
+                                        @error('stok')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label small fw-semibold">
+                                            Selling Price
+                                        </label>
+                                        <input type="number" name="harga" value="{{ old('harga') }}"
+                                            class="form-control @error('harga') is-invalid @enderror"
+                                            placeholder="Enter Selling Price" step="0.01">
+                                        @error('harga')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="mt-4 pt-3 border-top d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="bi bi-check-circle"></i>
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-light" data-bs-toggle="collapse"
+                                            data-bs-target="#din-form-collapse">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label small fw-semibold">Part Name</label>
-                        <input type="text" class="form-control" placeholder="Part Name">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold">Supplier</label>
-                        <input type="text" class="form-control" placeholder="Supplier Name">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold">Stock</label>
-                        <input type="number" class="form-control" placeholder="0">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold">Unit</label>
-                        <input type="text" class="form-control" id="din-unit" placeholder="pcs / L / kg" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label small fw-semibold">Unit Cost ($)</label>
-                        <input type="number" class="form-control" id="din-cost" placeholder="0.00" step="0.01">
-                    </div>                   
-                <div class="mt-4 pt-3 border-top d-flex gap-2">
-                    <button class="btn btn-primary" onclick="submitForm('din')">✓ Save</button>
-                    <button class="btn btn-light" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#din-form-collapse">Cancel</button>
                 </div>
             </div>
         </div>
-    </div>        
 
         <div class="card-body">
             <div class="table-responsive mt-3">

@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('kode_barang')->unique();
             $table->string('nama_barang');
             $table->string('satuan');
-            $table->string('kategori');
+            $table->integer('min_stok')->default(0);
+            $table->decimal('harga', 15, 2)->default(0);
             $table->timestamps();
         });
     }
