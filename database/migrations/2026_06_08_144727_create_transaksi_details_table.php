@@ -13,12 +13,14 @@ return new class extends Migration {
         Schema::create('transaksi_details', function (Blueprint $table) {
             $table->id();
 
+            $table->unsignedBigInteger('transaksi_id');
             $table->foreign('transaksi_id')
                 ->references('id')
                 ->on('transaksis')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
 
+            $table->unsignedBigInteger('barang_id');
             $table->foreign('barang_id')
                 ->references('id')
                 ->on('barangs')
