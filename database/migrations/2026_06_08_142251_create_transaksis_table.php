@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('kode_transaksi')->unique();
 
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->noActionOnDelete()->cascadeOnUpdate();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
 
             $table->string('nama_customer')->nullable();
 

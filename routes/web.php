@@ -24,6 +24,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/', action: [BarangController::class, 'index'])->name('index');
         Route::post('/create', [BarangController::class, 'create'])->name('create');
+        Route::put('/update/{id}', [BarangController::class, 'update'])->name('update');
+        Route::delete('/delete/{id}', [BarangController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('forecast')->name('forecast.')->group(function () {

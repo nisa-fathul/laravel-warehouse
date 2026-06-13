@@ -20,4 +20,13 @@ class barang extends Model
     {
         return $this->hasOne(stok::class, 'barang_id');
     }
+
+    public function hargaFormat(string $currency = 'SGD'): string
+    {
+        return match (strtoupper($currency)) {
+            'IDR' => 'Rp ' . number_format($this->harga, 0, ',', '.'),
+            'SGD' => 'SGD ' . number_format($this->harga, 2, '.', ','),
+            default => 'SGD ' . number_format($this->harga, 2, '.', ','),
+        };
+    }
 }

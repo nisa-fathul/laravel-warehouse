@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('stoks', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('barang_id');
-            $table->foreign('barang_id')->references('id')->on('barangs')->noActionOnDelete()->cascadeOnUpdate();
+            $table->foreign('barang_id')->references('id')->on('barangs')->cascadeOnDelete()->cascadeOnUpdate();
             $table->integer('qty')->default(0);
             $table->timestamps();
         });

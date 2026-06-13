@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->unsignedBigInteger('barang_id');
-            $table->foreign('barang_id')->references('id')->on('barangs')->noActionOnDelete()->cascadeOnUpdate();
+            $table->foreign('barang_id')->references('id')->on('barangs')->cascadeOnDelete()->cascadeOnUpdate();
 
             $table->date('periode');
             $table->integer('nilai_forecast');

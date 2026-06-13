@@ -8,6 +8,64 @@
             info: true,
         });
     });
+
+    function deleteItem(url) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure?',
+            text: 'You are about to delete this record.',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: 'delete',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+
+                    beforeSend: function () {
+                        Swal.fire({
+                            title: 'Deleting...',
+                            text: 'Please wait',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                    },
+
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: response.message ?? 'Item deleted successfully.',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed',
+                            text: xhr.responseJSON?.message ?? 'Failed to delete item.'
+                        });
+                    }
+                });
+
+            }
+
+        });
+    }
 </script>
 @endpush
 
@@ -45,7 +103,7 @@
 
                                         <input type="text" name="kode_barang" value="{{ old('kode_barang') }}"
                                             class="form-control @error('kode_barang') is-invalid @enderror"
-                                            placeholder="Enter Part Number">
+                                            placeholder="Enter Part Number" required>
 
                                         @error('kode_barang')
                                         <div class="invalid-feedback">
@@ -61,7 +119,7 @@
 
                                         <input type="text" name="nama_barang" value="{{ old('nama_barang') }}"
                                             class="form-control @error('nama_barang') is-invalid @enderror"
-                                            placeholder="Enter Part Name">
+                                            placeholder="Enter Part Name" required>
 
                                         @error('nama_barang')
                                         <div class="invalid-feedback">
@@ -76,7 +134,7 @@
                                         </label>
                                         <input type="text" name="satuan" value="{{ old('satuan') }}"
                                             class="form-control @error('satuan') is-invalid @enderror"
-                                            placeholder="PCS / KG / LTR">
+                                            placeholder="PCS / KG / LTR" required>
                                         @error('satuan')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -90,7 +148,7 @@
                                         </label>
                                         <input type="number" name="min_stok" value="{{ old('min_stok') }}"
                                             class="form-control @error('min_stok') is-invalid @enderror"
-                                            placeholder="Enter Minimum Stock">
+                                            placeholder="Enter Minimum Stock" required>
                                         @error('min_stok')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -104,7 +162,7 @@
                                         </label>
                                         <input type="number" name="stok" value="{{ old('stok') }}"
                                             class="form-control @error('stok') is-invalid @enderror"
-                                            placeholder="Enter Actual Stock">
+                                            placeholder="Enter Actual Stock" required>
                                         @error('stok')
                                         <div class="invalid-feedback">
                                             {{ $message }}
@@ -118,9 +176,9 @@
                                         </label>
                                         <input type="number" name="harga" value="{{ old('harga') }}"
                                             class="form-control @error('harga') is-invalid @enderror"
-                                            placeholder="Enter Selling Price" step="0.01">
+                                            placeholder="Enter Selling Price" step="0.01" required>
                                         @error('harga')
-                                        <div class="invalid-feedback">
+                                        <div class="invalid-feedback" required>
                                             {{ $message }}
                                         </div>
                                         @enderror
@@ -151,197 +209,177 @@
                         <tr>
                             <th>Part No</th>
                             <th>Part Name</th>
+                            <th>Minimum Stock</th>
                             <th>Stock</th>
                             <th>Unit Cost</th>
                             <th>Total Value</th>
-                            <th>Lead Days</th>
                             <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
                     <tbody>
+                        @foreach ($dataBarang as $key => $value )
+                            <tr>
+                                <td class="fw-bold">{{ $value->kode_barang }}</td>
+                                <td>
+                                    {{ $value->nama_barang }}
+                                </td>
+                                <td>{{ $value->min_stok }} {{ $value->satuan }}</td>
+                                <td>{{ $value->stok->qty }} {{ $value->satuan }}</td>
+                                <td>{{ $value->hargaFormat() }}</td>
+                                <td>{{ 'SGD '.number_format($value->harga * $value->stok->qty, 2, '.', ',') }}</td>
+                                <td>
+                                    @php
+                                        $actual_stok = $value->stok->qty;
+                                        $min_stok = $value->min_stok;
 
-                        <tr>
-                            <td>SKU001</td>
-                            <td>
-                                <strong>Steel Plate A36</strong>
-                                <br>
-                                <small class="text-muted">
-                                    PT Baja Indonesia
-                                </small>
-                            </td>
-                            <td>2,450 KG</td>
-                            <td>$25.00</td>
-                            <td>$61,250</td>
-                            <td>14</td>
-                            <td>
-                                <span class="badge bg-success">
-                                    OK
-                                </span>
-                            </td>
-                        </tr>
+                                        if ($actual_stok < $min_stok) {
+                                            $status_stok = 'Critical';
+                                            $badge_class = 'bg-danger';
+                                        } elseif ($actual_stok <= ($min_stok + 10)) {
+                                            $status_stok = 'Low';
+                                            $badge_class = 'bg-warning text-dark';
+                                        } else {
+                                            $status_stok = 'Ok';
+                                            $badge_class = 'bg-success';
+                                        }
+                                    @endphp
 
-                        <tr>
-                            <td>SKU002</td>
-                            <td>
-                                <strong>Aluminium Sheet</strong>
-                                <br>
-                                <small class="text-muted">
-                                    PT Aluminium Jaya
-                                </small>
-                            </td>
-                            <td>520 PCS</td>
-                            <td>$18.00</td>
-                            <td>$9,360</td>
-                            <td>10</td>
-                            <td>
-                                <span class="badge bg-warning text-dark">
-                                    Low
-                                </span>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>SKU003</td>
-                            <td>
-                                <strong>Hex Bolt M12</strong>
-                                <br>
-                                <small class="text-muted">
-                                    Fastener Supplier
-                                </small>
-                            </td>
-                            <td>80 PCS</td>
-                            <td>$0.50</td>
-                            <td>$40</td>
-                            <td>5</td>
-                            <td>
-                                <span class="badge bg-danger">
-                                    Critical
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>SKU004</td>
-                            <td>
-                                <strong>Bearing 6204</strong>
-                                <br>
-                                <small class="text-muted">
-                                    SKF Indonesia
-                                </small>
-                            </td>
-                            <td>1,250 PCS</td>
-                            <td>$3.00</td>
-                            <td>$3,750</td>
-                            <td>7</td>
-                            <td>
-                                <span class="badge bg-success">
-                                    OK
-                                </span>
-                            </td>
-                        </tr>
+                                    <span class="badge {{ $badge_class }}">
+                                        {{ $status_stok }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ $value->id }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteItem('{{ route('inventory.destroy',['id' => $value->id]) }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+</main>
 
-    <div class="row mt-4 g-3">
-        <div class="col-lg-3">
-            <div class="card h-100 border-success shadow-sm">
-                <div class="card-body">
-                    <h6>Steel Plate A36</h6>
-
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            Current Stock : <strong>2450 KG</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Reorder Point : <strong>500</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Min / Max : <strong>300 / 3000</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Coverage : <strong>6.5 Months</strong>
-                        </li>
-                    </ul>
-                </div>
+@foreach ($dataBarang as $barang )
+<div class="modal fade" id="editModal{{ $barang->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Item</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
+            <div class="modal-body">
+                <form action="{{ route('inventory.update', ['id' => $barang->id]) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label small fw-semibold">
+                                Part Number
+                            </label>
 
-        <div class="col-lg-3">
-            <div class="card h-100 border-warning shadow-sm">
-                <div class="card-body">
-                    <h6>Aluminium Sheet</h6>
+                            <input type="text" name="kode_barang" value="{{ old('kode_barang', $barang->kode_barang) }}"
+                                class="form-control @error('kode_barang') is-invalid @enderror"
+                                placeholder="Enter Part Number">
 
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            Current Stock : <strong>520 PCS</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Reorder Point : <strong>400</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Min / Max : <strong>200 / 1200</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Coverage : <strong>2.8 Months</strong>
-                        </li>
-                    </ul>
-                </div>
+                            @error('kode_barang')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-semibold">
+                                Part Name
+                            </label>
+
+                            <input type="text" name="nama_barang" value="{{ old('nama_barang', $barang->nama_barang) }}"
+                                class="form-control @error('nama_barang') is-invalid @enderror"
+                                placeholder="Enter Part Name">
+
+                            @error('nama_barang')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-semibold">
+                                Unit
+                            </label>
+                            <input type="text" name="satuan" value="{{ old('satuan', $barang->satuan) }}"
+                                class="form-control @error('satuan') is-invalid @enderror"
+                                placeholder="PCS / KG / LTR">
+                            @error('satuan')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-semibold">
+                                Minimum Stock
+                            </label>
+                            <input type="number" name="min_stok" value="{{ old('min_stok', $barang->min_stok) }}"
+                                class="form-control @error('min_stok') is-invalid @enderror"
+                                placeholder="Enter Minimum Stock">
+                            @error('min_stok')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+
+                        {{-- <div class="col-md-12">
+                            <label class="form-label small fw-semibold">
+                                Stock
+                            </label>
+                            <input type="number" name="stok" value="{{ old('stok', $barang->stok->qty) }}"
+                                class="form-control @error('stok') is-invalid @enderror"
+                                placeholder="Enter Actual Stock">
+                            @error('stok')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div> --}}
+
+                        <div class="col-md-12">
+                            <label class="form-label small fw-semibold">
+                                Selling Price
+                            </label>
+                            <input type="number" name="harga" value="{{ old('harga', $barang->harga) }}"
+                                class="form-control @error('harga') is-invalid @enderror"
+                                placeholder="Enter Selling Price" step="0.01">
+                            @error('harga')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                            @enderror
+                        </div>
+                    </div>
             </div>
-        </div>
-
-        <div class="col-lg-3">
-            <div class="card h-100 border-danger shadow-sm">
-                <div class="card-body">
-                    <h6>Hex Bolt M12</h6>
-
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            Current Stock : <strong>80 PCS</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Reorder Point : <strong>250</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Min / Max : <strong>100 / 1000</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Coverage : <strong>0.5 Months</strong>
-                        </li>
-                    </ul>
-
-                    <button class="btn btn-danger w-100 mt-3">
-                        Create Purchase Order
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3">
-            <div class="card h-100 border-primary shadow-sm">
-                <div class="card-body">
-                    <h6>Bearing 6204</h6>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            Current Stock : <strong>1250 PCS</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Reorder Point : <strong>300</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Min / Max : <strong>200 / 2000</strong>
-                        </li>
-                        <li class="list-group-item">
-                            Coverage : <strong>4.5 Months</strong>
-                        </li>
-                    </ul>
-                </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-warning">Save changes</button>
+                </form>
             </div>
         </div>
     </div>
-</main>
+</div>
+@endforeach
 
 @include('components.footer')
 @endsection
