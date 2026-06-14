@@ -29,4 +29,9 @@ class barang extends Model
             default => 'SGD ' . number_format($this->harga, 2, '.', ','),
         };
     }
+
+    public function transaksiDetails()
+    {
+        return $this->hasMany(transaksiDetail::class, 'barang_id');
+    }
 }

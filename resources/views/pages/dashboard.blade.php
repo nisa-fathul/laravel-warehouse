@@ -16,8 +16,8 @@
 
 <!-- KPI -->
 <main id="main" class="main">
-    <div class="row mb-3">
-        <div class="col-md-6 col-xl">
+    <div class="row row-gap-3 mb-3">
+        <div class="col-md-6 col-lg-4 col-xl">
             <div class="card shadow-sm h-100">
                 <div class="card-body">
                     <small class="text-muted">Total SKUs</small>
@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-xl">
+        <div class="col-md-6 col-lg-4 col-xl">
             <div class="card border-primary shadow-sm h-100">
                 <div class="card-body">
                     <small class="text-muted">Inventory Value</small>
@@ -37,7 +37,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-xl">
+        <div class="col-md-6 col-lg-4 col-xl">
             <div class="card border-danger shadow-sm h-100">
                 <div class="card-body">
                     <small class="text-muted">Critical Alerts</small>
@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-xl">
+        <div class="col-md-6 col-lg-4 col-xl">
             <div class="card border-warning shadow-sm h-100">
                 <div class="card-body">
                     <small class="text-muted">Low Stock Items</small>
@@ -57,12 +57,12 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-xl">
+        <div class="col-md-6 col-lg-4 col-xl">
             <div class="card shadow-sm h-100">
                 <div class="card-body">
                     <small class="text-muted">Avg Monthly Demand</small>
-                    <h2 class="mb-0">$125,000</h2>
-                    <small class="text-secondary">Next 6-month avg</small>
+                    <h2 class="mb-0">{{ 'SGD '.number_format($average['average_monthly'], 2, '.', ',') }}</h2>
+                    <small class="text-secondary">Monthly Avg</small>
                 </div>
             </div>
         </div>
@@ -73,103 +73,48 @@
         <div class="col-lg-12">
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Stock Level Overview</span>
-                    <a href="#" class="btn btn-sm btn-outline-primary">
-                        View All
+                    <span>Top 5 Items</span>
+                    <a href="{{ Route('inventory.index') }}" class="btn btn-sm btn-outline-primary">
+                        Stock Overview
                     </a>
                 </div>
 
                 <div class="card-body">
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between">
-                            <strong>Steel Plate A36</strong>
-                            <span>2,450 KG</span>
-                        </div>
-                        <div class="progress mt-2">
-                            <div class="progress-bar bg-success" style="width:85%"></div>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between">
-                            <strong>Aluminium Sheet</strong>
-                            <span>520 PCS</span>
-                        </div>
-                        <div class="progress mt-2">
-                            <div class="progress-bar bg-warning" style="width:45%"></div>
-                        </div>
-                    </div>
+                    @forelse ($topBarang as $key => $value )
+                        @php
+                            $actual_stok = $value->stok->qty;
+                            $min_stok = $value->min_stok;
 
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between">
-                            <strong>Hex Bolt M12</strong>
-                            <span>80 PCS</span>
-                        </div>
-                        <div class="progress mt-2">
-                            <div class="progress-bar bg-danger" style="width:15%"></div>
-                        </div>
-                    </div>
+                            $max_stok = $min_stok + 10;
+                            $progress = min(
+                                ($actual_stok / $max_stok) * 100,
+                                100
+                            );
+                            if ($actual_stok < $min_stok) {
+                                $badge_class = 'bg-danger';
+                            } elseif ($actual_stok <= ($min_stok + 10)) {
+                                $badge_class = 'bg-warning';
+                            } else {
+                                $badge_class = 'bg-success';
+                            }
+                        @endphp
 
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Forecast -->
-    <div class="card shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span>6-Month Demand Forecast Snapshot</span>
-            <a href="#" class="btn btn-sm btn-outline-primary">
-                Full Analysis
-            </a>
-        </div>
-
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <div class="border rounded p-3">
-                        <h6>Steel Plate A36</h6>
-                        <small class="text-muted">SKU-001</small>
-
-                        <div class="mt-3">
-                            <span class="badge bg-success">
-                                Risk: Low
-                            </span>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ $value->nama_barang }}</strong>
+                                <span>{{ $value->stok->qty }} {{ $value->satuan }}</span>
+                            </div>
+                            <div class="progress mt-2">
+                                <div class="progress-bar {{ $badge_class }}" style="width: {{ $progress }}%">
+                                    {{ round($progress) }}%
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="border rounded p-3">
-                        <h6>Aluminium Sheet</h6>
-                        <small class="text-muted">SKU-002</small>
-                        <div class="mt-3">
-                            <span class="badge bg-warning">
-                                Risk: Medium
-                            </span>
+                    @empty
+                        <div class="col-12">
+                            <x-empty-state/>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="border rounded p-3">
-                        <h6>Hex Bolt M12</h6>
-                        <small class="text-muted">SKU-003</small>
-                        <div class="mt-3">
-                            <span class="badge bg-danger">
-                                Risk: High
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="border rounded p-3">
-                        <h6>Bearing 6204</h6>
-                        <small class="text-muted">SKU-004</small>
-                        <div class="mt-3">
-                            <span class="badge bg-success">
-                                Risk: Low
-                            </span>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
             </div>
         </div>
