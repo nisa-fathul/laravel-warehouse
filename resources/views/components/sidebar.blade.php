@@ -29,16 +29,16 @@
 
         <li class="nav-heading">DELIVERY</li>
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('transaction.in') ? '' : 'collapsed' }}"
-                href="{{ route('transaction.in') }}">
+            <a class="nav-link {{ request()->routeIs('transaction.index', ['type' => 'in']) ? '' : 'collapsed' }}"
+                href="{{ route('transaction.index', ['type' => 'in']) }}">
                 <i class="bi bi-box-arrow-in-down"></i>
                 <span>Delivery In</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link {{ request()->routeIs('transaction.out') ? '' : 'collapsed' }}"
-                href="{{ route('transaction.out') }}">
+            <a class="nav-link {{ request()->routeIs('transaction.index', ['type' => 'out']) ? '' : 'collapsed' }}"
+                href="{{ route('transaction.index', ['type' => 'out']) }}">
                 <i class="bi bi-box-arrow-up"></i>
                 <span>Delivery Out</span>
             </a>

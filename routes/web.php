@@ -33,8 +33,12 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::prefix('transaction')->name('transaction.')->group(function () {
-        Route::get('/in', [TransaksiController::class, 'in'])->name('in');
-        Route::get('/out', [TransaksiController::class, 'out'])->name('out');
+        Route::get('/{type}', [TransaksiController::class, 'in'])->name('index');
+        Route::post('/in', [TransaksiController::class, 'storeIn'])->name('in.store');
+        Route::put('/in/{id_transaksi}', [TransaksiController::class, 'updateIn'])->name('in.update');
+        Route::get('/{type}/{action}/{id}', [TransaksiController::class, 'detail'])->name('detail');
+        Route::post('/out', [TransaksiController::class, 'storeOut'])->name('out.store');
+        Route::put('/out/{id_transaksi}', [TransaksiController::class, 'updateOut'])->name('out.update');
     });
 
     Route::prefix('report')->name('report.')->group(function () {
