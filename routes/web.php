@@ -21,46 +21,49 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('inventory')->name('inventory.')->group(function () {
-        Route::get('/', action: [BarangController::class, 'index'])->name('index');
-        Route::post('/create', [BarangController::class, 'create'])->name('create');
-        Route::put('/update/{id}', [BarangController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [BarangController::class, 'destroy'])->name('destroy');
-    });
-
-    Route::prefix('forecast')->name('forecast.')->group(function () {
-        Route::get('/', [ForecastController::class, 'index'])->name('index');
-    });
-
-    Route::prefix('transaction')->name('transaction.')->group(function () {
-        Route::get('/{type}', [TransaksiController::class, 'in'])->name('index');
-        Route::post('/in', [TransaksiController::class, 'storeIn'])->name('in.store');
-        Route::put('/in/{id_transaksi}', [TransaksiController::class, 'updateIn'])->name('in.update');
-        Route::get('/{type}/{action}/{id}', [TransaksiController::class, 'detail'])->name('detail');
-        Route::post('/out', [TransaksiController::class, 'storeOut'])->name('out.store');
-        Route::put('/out/{id_transaksi}', [TransaksiController::class, 'updateOut'])->name('out.update');
-    });
-
-    Route::prefix('report')->name('report.')->group(function () {
-        Route::get('/', [ReportController::class, 'index'])->name('index');
-    });
-
     Route::middleware(['Authorize_Access:Admin'])->group(function () {
-        Route::apiResource('/role', RolesController::class);
-        Route::prefix('permission')->name('permission.')->group(function () {
-            Route::get('/', [PermissionController::class, 'index'])
-                ->name('index');
-            Route::post('/', [PermissionController::class, 'store'])
-                ->name('store');
-            Route::put('/{id_permission}', [PermissionController::class, 'update'])
-                ->name('update');
-            Route::delete('/mass-delete', [PermissionController::class, 'destroy'])
-                ->name('destroy');
+        Route::prefix('inventory')->name('inventory.')->group(function () {
+            Route::get('/', action: [BarangController::class, 'index'])->name('index');
+            Route::post('/create', [BarangController::class, 'create'])->name('create');
+            Route::put('/update/{id}', [BarangController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [BarangController::class, 'destroy'])->name('destroy');
         });
 
-        Route::get('users/assign', [UserController::class, 'assignIndex'])->name('user.assign.index');
-        Route::put('users/{id}/assign_roles', [UserController::class, 'assignRoles'])->name('user.assign.roles.update');
-        Route::put('users/{id}/assign_permisson', [UserController::class, 'assignPermission'])->name('user.assign.permissions.update');
+        Route::prefix('forecast')->name('forecast.')->group(function () {
+            Route::get('/', [ForecastController::class, 'index'])->name('index');
+        });
+
+        Route::apiResource('/role', RolesController::class);
+        // Route::prefix('permission')->name('permission.')->group(function () {
+        //     Route::get('/', [PermissionController::class, 'index'])
+        //         ->name('index');
+        //     Route::post('/', [PermissionController::class, 'store'])
+        //         ->name('store');
+        //     Route::put('/{id_permission}', [PermissionController::class, 'update'])
+        //         ->name('update');
+        //     Route::delete('/mass-delete', [PermissionController::class, 'destroy'])
+        //         ->name('destroy');
+        // });
+
+        // Route::get('users/assign', [UserController::class, 'assignIndex'])->name('user.assign.index');
+        // Route::put('users/{id}/assign_roles', [UserController::class, 'assignRoles'])->name('user.assign.roles.update');
+        // Route::put('users/{id}/assign_permisson', [UserController::class, 'assignPermission'])->name('user.assign.permissions.update');
     });
 
+    Route::middleware(['Authorize_Access:Staf Gudang'])->group(function () {
+        Route::prefix('transaction')->name('transaction.')->group(function () {
+            Route::get('/{type}', [TransaksiController::class, 'in'])->name('index');
+            Route::post('/in', [TransaksiController::class, 'storeIn'])->name('in.store');
+            Route::put('/in/{id_transaksi}', [TransaksiController::class, 'updateIn'])->name('in.update');
+            Route::get('/{type}/{action}/{id}', [TransaksiController::class, 'detail'])->name('detail');
+            Route::post('/out', [TransaksiController::class, 'storeOut'])->name('out.store');
+            Route::put('/out/{id_transaksi}', [TransaksiController::class, 'updateOut'])->name('out.update');
+        });
+    });
+
+    Route::middleware(['Authorize_Access:Manajemen, Staf Gudang'])->group(function () {
+        Route::prefix('report')->name('report.')->group(function () {
+            Route::get('/', [ReportController::class, 'index'])->name('index');
+        });
+    });
 });

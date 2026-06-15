@@ -146,11 +146,11 @@ class TransaksiController extends Controller
         try {
             DB::transaction(function () use ($validated) {
                 $transaksi = transaksi::create([
-                    'kode_transaksi' => $this->generateTransactionCode('OUT'),
+                    'kode_transaksi' => $this->generateTransactionCode('IN'),
                     'user_id' => Auth::id(),
                     'nama_customer' => $validated['supplier_name'],
                     'tanggal_transaksi' => $validated['transaction_date'],
-                    'jenis_transaksi' => 1,
+                    'jenis_transaksi' => 0,
                     'keterangan' => $validated['notes'] ?? null,
                 ]);
 

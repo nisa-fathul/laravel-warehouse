@@ -16,6 +16,7 @@
 
 <!-- KPI -->
 <main id="main" class="main">
+    @hasanyrole(['Staf Gudang', 'Manajemen'])
     <div class="row row-gap-3 mb-3">
         <div class="col-md-6 col-lg-4 col-xl">
             <div class="card shadow-sm h-100">
@@ -119,5 +120,10 @@
             </div>
         </div>
     </div>
+    @else
+    <div class="card">
+        <x-empty-state />
+    </div>
+    @endhasanyrole
 </main>
 @endsection
