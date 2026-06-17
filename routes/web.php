@@ -29,10 +29,6 @@ Route::middleware(['auth'])->group(function () {
             Route::delete('/delete/{id}', [BarangController::class, 'destroy'])->name('destroy');
         });
 
-        Route::prefix('forecast')->name('forecast.')->group(function () {
-            Route::get('/', [ForecastController::class, 'index'])->name('index');
-        });
-
         Route::apiResource('/role', RolesController::class);
         // Route::prefix('permission')->name('permission.')->group(function () {
         //     Route::get('/', [PermissionController::class, 'index'])
@@ -50,6 +46,12 @@ Route::middleware(['auth'])->group(function () {
         // Route::put('users/{id}/assign_permisson', [UserController::class, 'assignPermission'])->name('user.assign.permissions.update');
     });
 
+    Route::middleware(['Authorize_Access:Admin|Manajemen|Staf Gudang'])->group(function () {
+        Route::prefix('forecast')->name('forecast.')->group(function () {
+                Route::get('/', [ForecastController::class, 'index'])->name('index');
+        });
+    });
+
     Route::middleware(['Authorize_Access:Staf Gudang'])->group(function () {
         Route::prefix('transaction')->name('transaction.')->group(function () {
             Route::get('/{type}', [TransaksiController::class, 'in'])->name('index');
@@ -61,7 +63,7 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::middleware(['Authorize_Access:Manajemen, Staf Gudang'])->group(function () {
+    Route::middleware(['Authorize_Access:Manajemen|Staf Gudang'])->group(function () {
         Route::prefix('report')->name('report.')->group(function () {
             Route::get('/', [ReportController::class, 'index'])->name('index');
         });

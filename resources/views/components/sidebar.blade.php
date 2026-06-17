@@ -21,7 +21,7 @@
             </li>
         @endhasanyrole
 
-        @hasanyrole(['Admin'])
+        @hasanyrole(['Admin', 'Staf Gudang', 'Manajemen'])
         <li class="nav-item">
             <a class="nav-link {{ request()->routeIs('forecast.*') ? '' : 'collapsed' }}"
                 href="{{ route('forecast.index') }}">
