@@ -98,13 +98,13 @@
                 <div class="col-auto">
                     <label class="form-label">Start Date</label>
                     <input id="start_date" name="start_date" type="date" class="form-control"
-                        value="{{ old('start_date', now()->format('Y-m-d')) }}">
+                        value="{{ old('start_date', request('start_date', now()->format('Y-m-d'))) }}">
                 </div>
 
                 <div class="col-auto">
                     <label class="form-label">End Date</label>
                     <input id="end_date" name="end_date" type="date" class="form-control"
-                        value="{{ old('end_date', now()->addMonth()->format('Y-m-d')) }}">
+                        value="{{ old('end_date', request('end_date', now()->addMonth()->format('Y-m-d'))) }}">
                 </div>
 
                 <div class="col-auto">

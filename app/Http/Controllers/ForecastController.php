@@ -38,48 +38,44 @@ class ForecastController extends Controller
             Ambil histori 3 hari sebelum start date
             agar forecast hari pertama bisa dihitung
             */
-            $historyStart = $startDateCarbon->copy()->subDays(3);
+            $historyStart = $startDateCarbon->copy()->subDays(5);
 
             $sales = transaksiDetail::query()
                 ->join('transaksis', 'transaksi_details.transaksi_id', '=', 'transaksis.id')
                 ->where('transaksis.jenis_transaksi', 1)
                 ->where('transaksi_details.barang_id', $idBarang)
-                ->whereBetween(
-                    'transaksis.tanggal_transaksi',
-                    [
-                        $historyStart->startOfDay(),
-                        $endDateCarbon->copy()->endOfDay()
-                    ]
-                )
+                ->where('transaksis.tanggal_transaksi', '<=', $endDateCarbon->copy()->endOfDay())
                 ->selectRaw("
                     DATE(transaksis.tanggal_transaksi) as tanggal,
                     SUM(transaksi_details.qty) as qty
                 ")
-                ->groupByRaw("DATE(transaksis.tanggal_transaksi), qty")
-                ->pluck('qty', 'tanggal');
+                ->groupByRaw("DATE(transaksis.tanggal_transaksi)")
+                ->orderBy('tanggal')
+                ->get();
+
+            $salesByDate = $sales->keyBy('tanggal');
 
             $period = CarbonPeriod::create($startDateCarbon, $endDateCarbon);
+
+            $historicalData = $sales
+                ->where('tanggal', '<', $startDateCarbon->format('Y-m-d'))
+                ->pluck('qty')
+                ->values()
+                ->toArray();
 
             foreach ($period as $date) {
 
                 $forecastDate = $date->format('Y-m-d');
 
-                $actual = $sales[$forecastDate] ?? 0;
+                $actual = $salesByDate[$forecastDate]->qty ?? 0;
 
-                $previous1 = $date->copy()->subDay()->format('Y-m-d');
-                $previous2 = $date->copy()->subDays(2)->format('Y-m-d');
-                $previous3 = $date->copy()->subDays(3)->format('Y-m-d');
+                $lastFive = collect($historicalData)
+                    ->take(-5);
 
-                $qty1 = $sales[$previous1] ?? 0;
-                $qty2 = $sales[$previous2] ?? 0;
-                $qty3 = $sales[$previous3] ?? 0;
+                $forecast = $lastFive->count()
+                    ? round($lastFive->avg(), 2)
+                    : 0;
 
-                // $movingAverage = ($qty1 + $qty2 + $qty3) / 3;
-
-                $forecast = round(
-                    ($qty1 + $qty2 + $qty3) / 3,
-                    2
-                );
                 $mape = 0;
 
                 if ($actual > 0) {
@@ -91,11 +87,20 @@ class ForecastController extends Controller
                     'nama_barang' => $selectedBarang->nama_barang,
                     'bulan' => $date->translatedFormat('F Y'),
                     'total_penjualan_aktual' => $actual,
-                    // 'ma' => round(num: $movingAverage, 2),
                     'forecast' => $forecast,
                     'mape' => round($mape, 2),
                     'stok_saat_ini' => $selectedBarang->stok->qty,
                 ]);
+
+                /*
+                 * Jika ada actual gunakan actual
+                 * Jika tidak ada actual gunakan forecast
+                 * supaya forecast berikutnya tetap bisa dihitung
+                 */
+
+                $historicalData[] = $actual > 0
+                    ? $actual
+                    : $forecast;
             }
 
             $chartData = $dataForecast->map(function ($item) {

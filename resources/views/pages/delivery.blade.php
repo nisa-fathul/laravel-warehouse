@@ -122,7 +122,11 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small fw-semibold">
+                                @if ($type == 'out')
+                                Customer
+                                @else
                                 Supplier / Vendor
+                                @endif
                             </label>
                             <input type="text" name="supplier_name" value="{{ old('supplier_name') }}" class="form-control @error('supplier_name') is-invalid @enderror" placeholder="Supplier Name" required>
                             @error('supplier_name')
@@ -169,7 +173,11 @@
                                         Current Stock
                                     </th>
                                     <th width="15%">
+                                        @if ($type == 'out')
+                                        Qty
+                                        @else
                                         Qty Received
+                                        @endif
                                     </th>
                                     <th width="15%">
                                         Action
