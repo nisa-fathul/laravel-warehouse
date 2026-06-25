@@ -6,6 +6,7 @@ use App\Models\transaksi;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
@@ -25,6 +26,8 @@ class ReportController extends Controller
             'years',
             now()->year
         );
+
+        $buttonValue = $request->input('download_pdf', 'search');
 
         $startDateCarbon = Carbon::parse($startDate);
         $endDateCarbon = Carbon::parse($endDate);
@@ -122,6 +125,23 @@ class ReportController extends Controller
             'sales_actual' => $monthlyData->pluck('sales_actual'),
             'delivery_qty' => $monthlyData->pluck('delivery_qty'),
         ];
+
+        if ($buttonValue == 'pdf') {
+            $dailyChartImage = $request->daily_chart_image;
+            $monthlyChartImage = $request->monthly_chart_image;
+
+            $pdf = Pdf::loadView('pages.report-pdf', [
+                'dailyData' => $dailyData,
+                'monthlyData' => $monthlyData,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'year' => $year,
+                'dailyChartImage' => $dailyChartImage,
+                'monthlyChartImage' => $monthlyChartImage,
+            ])->setPaper('a4', 'landscape');
+
+            return $pdf->stream('sales-report.pdf');
+        }
 
         return view('pages.report', [
             'dailyData' => $dailyData,

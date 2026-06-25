@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['Authorize_Access:Manajemen|Staf Gudang'])->group(function () {
         Route::prefix('report')->name('report.')->group(function () {
             Route::get('/', [ReportController::class, 'index'])->name('index');
+            Route::post('/', [ReportController::class, 'index'])->name('index.post');
         });
     });
 });

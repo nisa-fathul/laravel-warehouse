@@ -4,10 +4,13 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
+    let dailyChartInstance;
+    let monthlyChartInstance;
+
     const dailyChart = @json($dailyChart);
     const monthlyChart = @json($monthlyChart);
 
-    new ApexCharts(
+    dailyChartInstance = new ApexCharts(
         document.querySelector("#dailyChart"),
         {
             chart: {
@@ -34,9 +37,11 @@
                 enabled: false
             }
         }
-    ).render();
+    )
 
-    new ApexCharts(
+    dailyChartInstance.render()
+
+    monthlyChartInstance = new ApexCharts(
         document.querySelector("#monthlyChart"),
         {
             chart: {
@@ -63,7 +68,37 @@
                 enabled: false
             }
         }
-    ).render();
+    )
+
+    monthlyChartInstance.render()
+
+    $('#btn-preview-pdf').on('click', async function () {
+        let dailyImg = '';
+        let monthlyImg = '';
+
+        if (dailyChartInstance) {
+            const dailyUri = await dailyChartInstance.dataURI();
+            dailyImg = dailyUri.imgURI;
+        }
+
+        if (monthlyChartInstance) {
+            const monthlyUri = await monthlyChartInstance.dataURI();
+            monthlyImg = monthlyUri.imgURI;
+        }
+
+        $('#daily_chart_image').val(dailyImg);
+        $('#monthly_chart_image').val(monthlyImg);
+        $('#download_pdf').val('pdf');
+
+        $('#preview-report-form')
+        .attr('target', '_blank')
+        .submit();
+
+        $('#preview-report-form')
+        .removeAttr('target', '_blank')
+
+        $('#download_pdf').val('');
+    });
 </script>
 
 <script>
@@ -91,8 +126,14 @@
 @include('components.navbar')
 @include('components.sidebar')
 
+@php
+$currentYear = now()->year;
+@endphp
+
 <main id="main" class="main">
-    <form action="{{ route('report.index') }}" action="get">
+    <form id="preview-report-form" action="{{ route('report.index.post') }}" method="POST">
+        @csrf
+        @method('post')
         <div class="card shadow-sm mt-4">
             <div class="row g-2 p-3 align-items-end">
                 <div class="col-auto">
@@ -104,7 +145,7 @@
                 <div class="col-auto">
                     <label class="form-label">End Date</label>
                     <input id="end_date" name="end_date" type="date" class="form-control"
-                        value="{{ old('end_date', request('end_date', now()->addMonth()->format('Y-m-d'))) }}">
+                        value="{{ old('end_date', request('end_date', now()->addDays(6)->format('Y-m-d'))) }}">
                 </div>
 
                 <div class="col-auto">
@@ -112,6 +153,16 @@
                         <i class="bi bi-search"></i>
                     </button>
                 </div>
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center px-2">
+                <input type="hidden" name="download_pdf" id="download_pdf" value="">
+                <input type="hidden" name="daily_chart_image" id="daily_chart_image">
+                <input type="hidden" name="monthly_chart_image" id="monthly_chart_image">
+
+                <button type="button" id="btn-preview-pdf" class="btn btn-danger">
+                    <i class="bi bi-file-earmark-pdf"></i> Preview PDF
+                </button>
             </div>
             <div class="card-header">
                 <h5 class="mb-0">
@@ -162,10 +213,6 @@
                 <div class="col-auto">
                     <label class="form-label">Year</label>
                     <select name="years" class="form-select">
-                        @php
-                        $currentYear = now()->year;
-                        @endphp
-
                         @for ($year = $currentYear - 5; $year <= $currentYear + 5; $year++) <option value="{{ $year }}"
                             {{ request('years', $currentYear)==$year ? 'selected' : '' }}>
                             {{ $year }}
