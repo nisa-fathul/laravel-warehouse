@@ -112,7 +112,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    {{-- <div class="col-md-2">
                         <label class="form-label">Start Date</label>
                         <input id="start_date" type="date" name="start_date" class="form-control"
                             value="{{ request('start_date') }}" required>
@@ -122,6 +122,17 @@
                         <label class="form-label">End Date</label>
                         <input id="end_date" type="date" name="end_date" class="form-control"
                             value="{{ request('end_date') }}" required>
+                    </div> --}}
+
+                    <div class="col-md-2">
+                        <label class="form-label">Year</label>
+                        <select name="years" class="form-select" required>
+                            @for ($year = now()->year - 5; $year <= now()->year + 5; $year++)
+                                <option value="{{ $year }}" {{ request('years', now()->year) == $year ? 'selected' : ''}}>
+                                    {{ $year }}
+                                </option>
+                                @endfor
+                        </select>
                     </div>
 
                     <div class="col-md-3 d-flex align-items-end">
