@@ -16,10 +16,13 @@ class DeliveryOutSeeder extends Seeder
      */
     public function run(): void
     {
-        $csv = array_map(
-            'str_getcsv',
-            file(database_path('data/delivery_out.csv'))
-        );
+        $csv = collect(array_map(
+                'str_getcsv',
+                file(database_path('data/delivery_out_new.csv'))
+            ))
+            ->filter(fn ($row) => count($row) >= 7)
+            ->values()
+            ->toArray();
 
         array_shift($csv);
 

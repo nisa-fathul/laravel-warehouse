@@ -124,7 +124,7 @@ class ForecastController extends Controller
     public function index(Request $request)
     {
         $idBarang = $request->input('item_id');
-        $year = $request->input('year', now()->year);
+        $year = $request->input('years', now()->year);
 
         $dataForecast = collect();
         $chartData = collect();
@@ -134,11 +134,11 @@ class ForecastController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Ambil data mulai 5 bulan sebelum Januari tahun terpilih
+            | Ambil data mulai 3 bulan sebelum Januari tahun terpilih
             |--------------------------------------------------------------------------
             */
             $startForecast = Carbon::create($year, 1, 1);
-            $historyStart = $startForecast->copy()->subMonths(5)->startOfMonth();
+            $historyStart = $startForecast->copy()->subMonths(3)->startOfMonth();
             $historyEnd = Carbon::create($year, 12, 31)->endOfMonth();
 
             $sales = transaksiDetail::query()
@@ -176,7 +176,7 @@ class ForecastController extends Controller
             */
             $historicalData = [];
 
-            for ($i = 5; $i >= 1; $i--) {
+            for ($i = 3; $i >= 1; $i--) {
                 $month = $startForecast->copy()->subMonths($i);
                 $monthKey = $month->format('Y-m');
 
@@ -195,9 +195,9 @@ class ForecastController extends Controller
                 $actual = $salesByMonth[$monthKey] ?? 0;
 
                 /*
-                Forecast = rata-rata 5 histori terakhir
+                Forecast = rata-rata 3 histori terakhir
                 */
-                $lastFive = collect($historicalData)->take(-5);
+                $lastFive = collect($historicalData)->take(-3);
 
                 $forecast = round($lastFive->avg(), 2);
 
