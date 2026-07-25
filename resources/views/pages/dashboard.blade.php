@@ -21,7 +21,7 @@
         <div class="col-md-6 col-lg-4 col-xl">
             <div class="card shadow-sm h-100">
                 <div class="card-body">
-                    <small class="text-muted">Total SKU</small>
+                    <small class="text-muted">Total SKUs</small>
                     <h2 class="mb-0">{{ $summary->total_active }}</h2>
                     <small class="text-secondary">Active products</small>
                 </div>
