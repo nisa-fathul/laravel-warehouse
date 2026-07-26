@@ -128,7 +128,8 @@
                         <label class="form-label">Year</label>
                         <select name="years" class="form-select" required>
                             @for ($year = now()->year - 5; $year <= now()->year + 5; $year++)
-                                <option value="{{ $year }}" {{ request('years', now()->year) == $year ? 'selected' : ''}}>
+                                <option value="{{ $year }}" {{ request('years', now()->year) == $year ? 'selected' :
+                                    ''}}>
                                     {{ $year }}
                                 </option>
                                 @endfor
@@ -161,6 +162,8 @@
                             {{-- <th>Rata-rata (MA)</th> --}}
                             <th>Forecast</th>
                             <th>MAPE (%)</th>
+                            <th>MAE</th>
+                            <th>MSE</th>
                             <th>Balance</th>
                         </tr>
                     </thead>
@@ -174,6 +177,8 @@
                             {{-- <td>16.731</td> --}}
                             <td>{{ $val['forecast'] }}</td>
                             <td>{{ $val['mape'].'%' }}</td>
+                            <td>{{ $val['mae'] }}</td>
+                            <td>{{ $val['mse'] }}</td>
                             <td>{{ $val['stok_saat_ini'] }}</td>
                         </tr>
                         @endforeach
