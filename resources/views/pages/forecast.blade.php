@@ -148,7 +148,7 @@
 
     <div class="card shadow-sm">
         <div class="card-header">
-            <h5 class="mb-0">Foreast result</h5>
+            <h5 class="mb-0">Forecast result</h5>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -175,10 +175,10 @@
                             <td>{{ $val['bulan'] }}</td>
                             <td>{{ $val['total_penjualan_aktual'] }}</td>
                             {{-- <td>16.731</td> --}}
-                            <td>{{ $val['forecast'] }}</td>
-                            <td>{{ $val['mape'].'%' }}</td>
-                            <td>{{ $val['mae'] }}</td>
-                            <td>{{ $val['mse'] }}</td>
+                            <td>{{ $val['forecast'] == null ? '-' : $val['forecast'] }}</td>
+                            <td>{{ $val['forecast'] == null ? '-' : $val['mape'].'%' }}</td>
+                            <td>{{ $val['forecast'] == null ? '-' : $val['mae'] }}</td>
+                            <td>{{ $val['forecast'] == null ? '-' : $val['mse'] }}</td>
                             <td>{{ $val['stok_saat_ini'] }}</td>
                         </tr>
                         @endforeach

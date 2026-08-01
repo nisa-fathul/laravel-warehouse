@@ -199,15 +199,28 @@ class ForecastController extends Controller
                 */
                 $lastFive = collect($historicalData)->take(-3);
 
-                $forecast = round($lastFive->avg(), 2);
+                $lastThree = collect($historicalData)->take(-3);
+                
+                if ($lastThree->contains(0)) {
+                    $forecast = null;
+                } else {
+                    $forecast = round($lastThree->avg(), 2);
+                }
 
                  // Absolute Error
+                $mae = null;
+                if ($actual > 0 && $forecast > 0) {
                 $mae = abs($actual - $forecast);
+                }
 
                 // Squared Error
+                $mse = null;
+                if ($actual > 0 && $forecast > 0) {
                 $mse = pow($actual - $forecast, 2);
+                }
 
-                $mape = 0;
+                // Absolute Percentage Error
+                $mape = null;
                 if ($actual > 0 && $forecast > 0) {
                     $mape = abs(($actual - $forecast) / $actual) * 100;
                 }

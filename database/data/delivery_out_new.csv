@@ -620,12 +620,12 @@ transaction date,cust,notes,item,unit,current stock,qty
 04.05.2025,SIGMA,-,Panel Holder,pcs,,0
 04.05.2025,SIGMA,-,Thining Comb,pcs,,0
 05.05.2025,SIGMA,-,Bottom Panel Black,pcs,,326
-05.05.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,636
+05.05.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,536
 05.05.2025,SIGMA,-,One Blade P-Cap,pcs,,481
 05.05.2025,SIGMA,-,Panel Holder,pcs,,535
 05.05.2025,SIGMA,-,Thining Comb,pcs,,670
 06.05.2025,SIGMA,-,Bottom Panel Black,pcs,,326
-06.05.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,636
+06.05.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,536
 06.05.2025,SIGMA,-,One Blade P-Cap,pcs,,481
 06.05.2025,SIGMA,-,Panel Holder,pcs,,535
 06.05.2025,SIGMA,-,Thining Comb,pcs,,670
@@ -905,152 +905,152 @@ transaction date,cust,notes,item,unit,current stock,qty
 30.06.2025,SIGMA,-,Panel Holder,pcs,,504
 30.06.2025,SIGMA,-,Thining Comb,pcs,,705
 01.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-01.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+01.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 01.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 01.07.2025,SIGMA,-,Panel Holder,pcs,,603
 01.07.2025,SIGMA,-,Thining Comb,pcs,,745
 02.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-02.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+02.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 02.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 02.07.2025,SIGMA,-,Panel Holder,pcs,,603
 02.07.2025,SIGMA,-,Thining Comb,pcs,,745
 03.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-03.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+03.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 03.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 03.07.2025,SIGMA,-,Panel Holder,pcs,,603
 03.07.2025,SIGMA,-,Thining Comb,pcs,,745
 04.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-04.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+04.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 04.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 04.07.2025,SIGMA,-,Panel Holder,pcs,,603
 04.07.2025,SIGMA,-,Thining Comb,pcs,,745
 05.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-05.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+05.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 05.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 05.07.2025,SIGMA,-,Panel Holder,pcs,,0
 05.07.2025,SIGMA,-,Thining Comb,pcs,,0
 06.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-06.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+06.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 06.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 06.07.2025,SIGMA,-,Panel Holder,pcs,,0
 06.07.2025,SIGMA,-,Thining Comb,pcs,,0
 07.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-07.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+07.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 07.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 07.07.2025,SIGMA,-,Panel Holder,pcs,,603
 07.07.2025,SIGMA,-,Thining Comb,pcs,,745
 08.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-08.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+08.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 08.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 08.07.2025,SIGMA,-,Panel Holder,pcs,,603
 08.07.2025,SIGMA,-,Thining Comb,pcs,,745
 09.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-09.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,662
+09.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,762
 09.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 09.07.2025,SIGMA,-,Panel Holder,pcs,,602
 09.07.2025,SIGMA,-,Thining Comb,pcs,,745
 10.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-10.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+10.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 10.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 10.07.2025,SIGMA,-,Panel Holder,pcs,,602
 10.07.2025,SIGMA,-,Thining Comb,pcs,,745
 11.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-11.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+11.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 11.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 11.07.2025,SIGMA,-,Panel Holder,pcs,,602
 11.07.2025,SIGMA,-,Thining Comb,pcs,,745
 12.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-12.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+12.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 12.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 12.07.2025,SIGMA,-,Panel Holder,pcs,,0
 12.07.2025,SIGMA,-,Thining Comb,pcs,,0
 13.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-13.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+13.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 13.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 13.07.2025,SIGMA,-,Panel Holder,pcs,,0
 13.07.2025,SIGMA,-,Thining Comb,pcs,,0
 14.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-14.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+14.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 14.07.2025,SIGMA,-,One Blade P-Cap,pcs,,507
 14.07.2025,SIGMA,-,Panel Holder,pcs,,602
 14.07.2025,SIGMA,-,Thining Comb,pcs,,745
 15.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-15.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+15.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 15.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 15.07.2025,SIGMA,-,Panel Holder,pcs,,602
 15.07.2025,SIGMA,-,Thining Comb,pcs,,745
 16.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-16.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+16.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 16.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 16.07.2025,SIGMA,-,Panel Holder,pcs,,602
 16.07.2025,SIGMA,-,Thining Comb,pcs,,745
 17.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-17.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+17.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 17.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 17.07.2025,SIGMA,-,Panel Holder,pcs,,602
 17.07.2025,SIGMA,-,Thining Comb,pcs,,745
 18.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-18.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+18.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 18.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 18.07.2025,SIGMA,-,Panel Holder,pcs,,602
 18.07.2025,SIGMA,-,Thining Comb,pcs,,745
 19.07.2025,SIGMA,-,Bottom Panel Black,pcs,,352
-19.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+19.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 19.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 19.07.2025,SIGMA,-,Panel Holder,pcs,,0
 19.07.2025,SIGMA,-,Thining Comb,pcs,,0
 20.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-20.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+20.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 20.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 20.07.2025,SIGMA,-,Panel Holder,pcs,,0
 20.07.2025,SIGMA,-,Thining Comb,pcs,,0
 21.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-21.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+21.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 21.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 21.07.2025,SIGMA,-,Panel Holder,pcs,,602
 21.07.2025,SIGMA,-,Thining Comb,pcs,,745
 22.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-22.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+22.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 22.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 22.07.2025,SIGMA,-,Panel Holder,pcs,,602
 22.07.2025,SIGMA,-,Thining Comb,pcs,,745
 23.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-23.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+23.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 23.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 23.07.2025,SIGMA,-,Panel Holder,pcs,,602
 23.07.2025,SIGMA,-,Thining Comb,pcs,,745
 24.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-24.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+24.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 24.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 24.07.2025,SIGMA,-,Panel Holder,pcs,,602
 24.07.2025,SIGMA,-,Thining Comb,pcs,,745
 25.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-25.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+25.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 25.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 25.07.2025,SIGMA,-,Panel Holder,pcs,,602
 25.07.2025,SIGMA,-,Thining Comb,pcs,,745
 26.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-26.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+26.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 26.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 26.07.2025,SIGMA,-,Panel Holder,pcs,,0
 26.07.2025,SIGMA,-,Thining Comb,pcs,,0
 27.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-27.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+27.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 27.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 27.07.2025,SIGMA,-,Panel Holder,pcs,,0
 27.07.2025,SIGMA,-,Thining Comb,pcs,,0
 28.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-28.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+28.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 28.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 28.07.2025,SIGMA,-,Panel Holder,pcs,,602
 28.07.2025,SIGMA,-,Thining Comb,pcs,,745
 29.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-29.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+29.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 29.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 29.07.2025,SIGMA,-,Panel Holder,pcs,,604
 29.07.2025,SIGMA,-,Thining Comb,pcs,,745
 30.07.2025,SIGMA,-,Bottom Panel Black,pcs,,351
-30.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,661
+30.07.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,761
 30.07.2025,SIGMA,-,One Blade P-Cap,pcs,,506
 30.07.2025,SIGMA,-,Panel Holder,pcs,,602
 30.07.2025,SIGMA,-,Thining Comb,pcs,,745
@@ -1665,7 +1665,7 @@ transaction date,cust,notes,item,unit,current stock,qty
 29.11.2025,SIGMA,-,Panel Holder,pcs,,0
 29.11.2025,SIGMA,-,Thining Comb,pcs,,0
 30.11.2025,SIGMA,-,Bottom Panel Black,pcs,,416
-30.11.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,736
+30.11.2025,SIGMA,-,I/O BUTTON BLACK TP,pcs,,636
 30.11.2025,SIGMA,-,One Blade P-Cap,pcs,,576
 30.11.2025,SIGMA,-,Panel Holder,pcs,,0
 30.11.2025,SIGMA,-,Thining Comb,pcs,,0
