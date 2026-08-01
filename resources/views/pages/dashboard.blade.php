@@ -74,7 +74,7 @@
         <div class="col-lg-12">
             <div class="card shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>Top 5 Items</span>
+                    <span>Inventory</span>
                     <a href="{{ Route('inventory.index') }}" class="btn btn-sm btn-outline-primary">
                         Stock Overview
                     </a>

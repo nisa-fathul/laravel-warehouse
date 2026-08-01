@@ -201,8 +201,14 @@ class ForecastController extends Controller
 
                 $forecast = round($lastFive->avg(), 2);
 
+                 // Absolute Error
+                $mae = abs($actual - $forecast);
+
+                // Squared Error
+                $mse = pow($actual - $forecast, 2);
+
                 $mape = 0;
-                if ($actual > 0) {
+                if ($actual > 0 && $forecast > 0) {
                     $mape = abs(($actual - $forecast) / $actual) * 100;
                 }
 
@@ -213,6 +219,8 @@ class ForecastController extends Controller
                     'tahun' => $year,
                     'total_penjualan_aktual' => $actual,
                     'forecast' => $forecast,
+                    'mae' => round($mae, 2),
+                    'mse' => round($mse, 2),
                     'mape' => round($mape, 2),
                     'stok_saat_ini' => $selectedBarang->stok->qty,
                 ]);
