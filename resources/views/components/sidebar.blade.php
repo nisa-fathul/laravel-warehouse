@@ -50,7 +50,7 @@
             </li>
         @endhasanyrole
 
-        @hasanyrole(['Manajemen', 'Staf Gudang'])
+        <!-- @hasanyrole(['Manajemen', 'Staf Gudang'])
             <li class="nav-heading">REPORT</li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('report.*') ? '' : 'collapsed' }}"
@@ -59,7 +59,7 @@
                     <span>Sales Report</span>
                 </a>
             </li>
-        @endhasanyrole
+        @endhasanyrole -->
 
         @hasanyrole(['Admin'])
             <!-- MENU LAMA -->
