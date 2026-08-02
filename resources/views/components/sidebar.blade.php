@@ -31,7 +31,7 @@
         </li>
         @endhasanyrole
 
-        @hasanyrole(['Staf Gudang'])
+        @hasanyrole(['Staf Gudang', 'Admin'])
             <li class="nav-heading">DELIVERY</li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('transaction.index') && request()->route('type') == 'in' ? '' : 'collapsed' }}"

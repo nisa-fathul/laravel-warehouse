@@ -16,7 +16,7 @@
 
 <!-- KPI -->
 <main id="main" class="main">
-    @hasanyrole(['Staf Gudang', 'Manajemen'])
+    @hasanyrole(['Staf Gudang', 'Admin'])
     <div class="row row-gap-3 mb-3">
         <div class="col-md-6 col-lg-4 col-xl">
             <div class="card shadow-sm h-100">
